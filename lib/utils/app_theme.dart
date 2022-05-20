@@ -19,9 +19,18 @@ class AppTheme {
       primaryColor: isDarkTheme
           ? AppColor.shared.mainColorDark
           : AppColor.shared.mainColor,
+      textTheme: TextTheme(
+        headline1: TextStyle(color: isDarkTheme ? Colors.white : Colors.black),
+        headline2: TextStyle(color: isDarkTheme ? Colors.white : Colors.black),
+        bodyText2: TextStyle(color: isDarkTheme ? Colors.white : Colors.black),
+        bodyText1: TextStyle(color: isDarkTheme ? Colors.white : Colors.black),
+      ),
       scaffoldBackgroundColor: isDarkTheme
           ? AppColor.shared.mainBackgroundColorDark
           : AppColor.shared.mainBackgroundColor,
+      checkboxTheme: CheckboxThemeData(
+        fillColor: MaterialStateProperty.all(Colors.blue),
+      ),
       inputDecorationTheme: InputDecorationTheme(
         fillColor: isDarkTheme
             ? AppColor.shared.inputBackgroundDark
