@@ -5,6 +5,7 @@ import 'package:proyecto/utils/app_color.dart';
 import 'package:proyecto/utils/app_string.dart';
 import 'package:proyecto/utils/app_style.dart';
 import 'package:proyecto/widget/widget_button.dart';
+import 'package:proyecto/widget/widget_check.dart';
 import 'package:proyecto/widget/widget_input.dart';
 
 class LoginPage extends StatefulWidget {
@@ -50,6 +51,20 @@ class _LoginPageState extends State<LoginPage> {
                     _getInput(localizations.dictionary(Strings.loginEmailHint)),
                     _getInput(
                         localizations.dictionary(Strings.loginPasswordHint)),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25),
+                      child: CheckboxText(
+                        onChanged: (value) {},
+                        text: localizations.dictionary(Strings.loginRememberMe),
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 30),
+                      child: IconButtonImage(
+                        height: 60,
+                        icon: "assets/icons/finger.png",
+                      ),
+                    ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 25),
                       child: ButtonTextGradient(

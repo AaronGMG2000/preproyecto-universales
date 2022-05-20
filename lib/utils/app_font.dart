@@ -26,7 +26,7 @@ class AppFont {
     return TextStyle(
       fontSize: 16,
       fontFamily: _fontLato,
-      color: isDark ? const Color(0xFF5C5A5A) : Colors.black,
+      color: isDark ? const Color(0xFF9a9a9a) : Colors.black,
       fontWeight: FontWeight.bold,
     );
   }
@@ -36,7 +36,7 @@ class AppFont {
     return TextStyle(
       fontSize: 14,
       fontFamily: _fontLato,
-      color: isDark ? const Color(0xFF656565) : Colors.white70,
+      color: isDark ? const Color(0xFF727272) : Colors.white70,
       fontWeight: FontWeight.bold,
     );
   }
