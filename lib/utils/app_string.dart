@@ -10,4 +10,11 @@ enum Strings {
   loginErrorEmail,
   loginErrorPassword,
   loginSingUpText,
+  singUpTitle,
+  singUpOthersOptions,
+  singUpEmailHint,
+  singUpNameHint,
+  singUpPasswordHint,
+  singUpRepeatPasswordHint,
+  singUpButtonText,
 }

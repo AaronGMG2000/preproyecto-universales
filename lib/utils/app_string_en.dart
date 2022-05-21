@@ -12,4 +12,11 @@ Map<Strings, String> dictionaryEn = {
   Strings.loginErrorEmail: "Enter your email address",
   Strings.loginErrorPassword: "Enter your password",
   Strings.loginSingUpText: "Sign up",
+  Strings.singUpTitle: "Sing Up",
+  Strings.singUpOthersOptions: "Sing up with one of following options",
+  Strings.singUpEmailHint: "Email",
+  Strings.singUpNameHint: "Name",
+  Strings.singUpPasswordHint: "Password",
+  Strings.singUpRepeatPasswordHint: "Repeat password",
+  Strings.singUpButtonText: "Create Account",
 };
