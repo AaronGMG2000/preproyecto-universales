@@ -13,4 +13,11 @@ Map<Strings, String> dictionaryEs = {
   Strings.loginErrorEmail: "Ingrese su correo electrónico",
   Strings.loginErrorPassword: "Ingrese su contraseña",
   Strings.loginSingUpText: "Registrate",
+  Strings.singUpTitle: "Registrarse",
+  Strings.singUpOthersOptions: "Regístrese con una de las siguientes opciones",
+  Strings.singUpEmailHint: "Correo electrónico",
+  Strings.singUpNameHint: "Nombre",
+  Strings.singUpPasswordHint: "Contraseña",
+  Strings.singUpRepeatPasswordHint: "Repetir contraseña",
+  Strings.singUpButtonText: "Crear cuenta",
 };

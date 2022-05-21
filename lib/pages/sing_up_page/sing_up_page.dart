@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:proyecto/localization/locations.dart';
-import 'package:proyecto/pages/sing_up_page/sing_up_page.dart';
 import 'package:proyecto/utils/app_color.dart';
 import 'package:proyecto/utils/app_string.dart';
 import 'package:proyecto/utils/app_style.dart';
@@ -9,106 +8,75 @@ import 'package:proyecto/widget/widget_button.dart';
 import 'package:proyecto/widget/widget_check.dart';
 import 'package:proyecto/widget/widget_input.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class SingUpPage extends StatefulWidget {
+  const SingUpPage({Key? key}) : super(key: key);
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<SingUpPage> createState() => _SingUpPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SingUpPageState extends State<SingUpPage> {
   late AppLocalizations localizations = AppLocalizations.of(context);
   final double expandedHeight = 250;
   final double collapsedHeight = 65;
   final scrollController = ScrollController();
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      controller: scrollController,
-      slivers: [
-        SliverAppBar(
-          automaticallyImplyLeading: false,
-          expandedHeight: expandedHeight,
-          collapsedHeight: collapsedHeight,
-          elevation: 0,
-          floating: true,
-          snap: true,
-          pinned: true,
-          backgroundColor: Colors.transparent,
-          flexibleSpace: RoundedAppBar(
-            expandedHeight + 20,
-            content: Padding(
-              padding: const EdgeInsets.only(top: 40),
-              child: _getHeader(scrollController),
+    return Scaffold(
+      body: CustomScrollView(
+        controller: scrollController,
+        slivers: [
+          SliverAppBar(
+            expandedHeight: expandedHeight,
+            automaticallyImplyLeading: false,
+            collapsedHeight: collapsedHeight,
+            elevation: 0,
+            floating: true,
+            snap: true,
+            pinned: true,
+            backgroundColor: Colors.transparent,
+            flexibleSpace: RoundedAppBar(
+              expandedHeight + 20,
+              content: Padding(
+                padding: const EdgeInsets.only(top: 40),
+                child: _getHeader(scrollController),
+              ),
             ),
           ),
-        ),
-        SliverToBoxAdapter(
-          child: Column(
-            children: [
-              Form(
-                child: Column(
-                  children: [
-                    _getInput(localizations.dictionary(Strings.loginEmailHint)),
-                    _getInput(
-                        localizations.dictionary(Strings.loginPasswordHint)),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 25),
-                      child: CheckboxText(
-                        onChanged: (value) {},
-                        text: localizations.dictionary(Strings.loginRememberMe),
-                      ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 30),
-                      child: IconButtonImage(
-                        height: 60,
-                        icon: "assets/icons/finger.png",
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 25),
-                      child: ButtonTextGradient(
-                        height: 60,
-                        size: 24,
-                        onPressed: () {},
-                        text: localizations.dictionary(Strings.loginButtonText),
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          localizations.dictionary(Strings.loginCreateAccount),
-                          style: AppStyle.shared.fonts.newAccountText2(context),
+          SliverToBoxAdapter(
+            child: Column(
+              children: [
+                Form(
+                  child: Column(
+                    children: [
+                      _getInput(
+                          localizations.dictionary(Strings.singUpEmailHint)),
+                      _getInput(
+                          localizations.dictionary(Strings.singUpNameHint)),
+                      _getInput(
+                          localizations.dictionary(Strings.singUpPasswordHint)),
+                      _getInput(localizations
+                          .dictionary(Strings.singUpRepeatPasswordHint)),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 25, vertical: 20),
+                        child: ButtonTextGradient(
+                          height: 60,
+                          size: 24,
+                          onPressed: () {},
+                          text: localizations
+                              .dictionary(Strings.singUpButtonText),
                         ),
-                        const SizedBox(width: 2),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const SingUpPage()),
-                            ).then((value) {
-                              if (value != null) {}
-                            });
-                          },
-                          child: Text(
-                            localizations.dictionary(Strings.loginSingUpText),
-                            style:
-                                AppStyle.shared.fonts.newAccountText(context),
-                          ),
-                        )
-                      ],
-                    )
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
-            ],
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -128,6 +96,7 @@ class _LoginPageState extends State<LoginPage> {
       builder: (context, constraints) {
         final scrollPosition = controller.positions.first;
         final diferenceHeight = constraints.maxHeight - collapsedHeight;
+        print(scrollPosition.userScrollDirection);
         if (scrollPosition.userScrollDirection == ScrollDirection.forward &&
             diferenceHeight > 25) {
           titlePaddingTop = titlePaddingTop + 2.5;
@@ -153,9 +122,25 @@ class _LoginPageState extends State<LoginPage> {
                 Container(
                   width: double.infinity,
                   alignment: Alignment.centerLeft,
-                  padding: EdgeInsets.fromLTRB(20, titlePaddingTop, 10, 20),
-                  child: Text(localizations.dictionary(Strings.loginTitle),
-                      style: AppStyle.shared.fonts.titleText(context)),
+                  padding: EdgeInsets.fromLTRB(20, titlePaddingTop, 10, 10),
+                  child: Row(
+                    children: [
+                      Text(
+                        localizations.dictionary(Strings.singUpTitle),
+                        style: AppStyle.shared.fonts.titleText(context),
+                      ),
+                      const Expanded(child: SizedBox()),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.close,
+                          size: 32,
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -165,7 +150,7 @@ class _LoginPageState extends State<LoginPage> {
                     width: double.infinity,
                     alignment: Alignment.centerLeft,
                     child: Text(
-                        localizations.dictionary(Strings.loginOthersOptions),
+                        localizations.dictionary(Strings.singUpOthersOptions),
                         style: AppStyle.shared.fonts
                             .moreOptionsSigInText(context)),
                   )
