@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:proyecto/localization/locations.dart';
+import 'package:proyecto/model/login_model.dart';
 import 'package:proyecto/utils/app_color.dart';
 import 'package:proyecto/utils/app_string.dart';
 import 'package:proyecto/utils/app_style.dart';
+import 'package:proyecto/utils/app_validation.dart';
+import 'package:proyecto/widget/widget_alert.dart';
 import 'package:proyecto/widget/widget_button.dart';
 import 'package:proyecto/widget/widget_check.dart';
 import 'package:proyecto/widget/widget_input.dart';
+
+import '../../bloc/register_bloc/register_bloc.dart';
 
 class SingUpPage extends StatefulWidget {
   const SingUpPage({Key? key}) : super(key: key);
@@ -20,71 +26,197 @@ class _SingUpPageState extends State<SingUpPage> {
   final double expandedHeight = 250;
   final double collapsedHeight = 65;
   final scrollController = ScrollController();
+  final Login register = Login();
+  final _formKey = GlobalKey<FormState>();
+  late bool obscureTextP = true;
+  late bool obscureTextP2 = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        controller: scrollController,
-        slivers: [
-          SliverAppBar(
-            expandedHeight: expandedHeight,
-            automaticallyImplyLeading: false,
-            collapsedHeight: collapsedHeight,
-            elevation: 0,
-            floating: true,
-            snap: true,
-            pinned: true,
-            backgroundColor: Colors.transparent,
-            flexibleSpace: RoundedAppBar(
-              expandedHeight + 20,
-              content: Padding(
-                padding: const EdgeInsets.only(top: 40),
-                child: _getHeader(scrollController),
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Column(
-              children: [
-                Form(
-                  child: Column(
-                    children: [
-                      _getInput(
-                          localizations.dictionary(Strings.singUpEmailHint)),
-                      _getInput(
-                          localizations.dictionary(Strings.singUpNameHint)),
-                      _getInput(
-                          localizations.dictionary(Strings.singUpPasswordHint)),
-                      _getInput(localizations
-                          .dictionary(Strings.singUpRepeatPasswordHint)),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 25, vertical: 20),
-                        child: ButtonTextGradient(
-                          height: 60,
-                          size: 24,
-                          onPressed: () {},
-                          text: localizations
-                              .dictionary(Strings.singUpButtonText),
-                        ),
-                      ),
-                    ],
+      body: BlocProvider(
+        create: (BuildContext context) => RegisterBloc(),
+        child: BlocListener<RegisterBloc, RegisterState>(
+          listener: (context, state) {
+            switch (state.runtimeType) {
+              case RegisterFailure:
+                Navigator.of(context).pop();
+                final estado = state as RegisterFailure;
+                AlertBottom(estado.error, Colors.orange, 1500, context);
+                break;
+              case RegisterLoading:
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const CircularProgressIndicator(),
                   ),
-                ),
-                const SizedBox(height: 20),
-              ],
-            ),
+                );
+                break;
+              case RegisterSuccess:
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+                break;
+            }
+          },
+          child: BlocBuilder<RegisterBloc, RegisterState>(
+            builder: (context, state) {
+              return CustomScrollView(
+                controller: scrollController,
+                slivers: [
+                  SliverAppBar(
+                    expandedHeight: expandedHeight,
+                    automaticallyImplyLeading: false,
+                    collapsedHeight: collapsedHeight,
+                    elevation: 0,
+                    floating: true,
+                    snap: true,
+                    pinned: true,
+                    backgroundColor: Colors.transparent,
+                    flexibleSpace: RoundedAppBar(
+                      expandedHeight + 20,
+                      content: Padding(
+                        padding: const EdgeInsets.only(top: 40),
+                        child: _getHeader(scrollController),
+                      ),
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Column(
+                      children: [
+                        Form(
+                          key: _formKey,
+                          child: Column(
+                            children: [
+                              _getInput(
+                                localizations
+                                    .dictionary(Strings.singUpEmailHint),
+                                (value) {
+                                  register.email = value;
+                                },
+                                (value) {
+                                  if (!Validator(value).isValidEmail) {
+                                    return localizations
+                                        .dictionary(Strings.loginErrorPassword);
+                                  }
+                                  return null;
+                                },
+                                false,
+                                () {},
+                                Icons.email,
+                              ),
+                              _getInput(
+                                localizations
+                                    .dictionary(Strings.singUpNameHint),
+                                (value) {
+                                  register.displayName = value;
+                                },
+                                (value) {
+                                  if (value.isEmpty) {
+                                    return localizations.dictionary(
+                                        Strings.registerDisplayedNameError);
+                                  }
+                                  return null;
+                                },
+                                false,
+                                () {},
+                                Icons.email,
+                              ),
+                              _getInput(
+                                localizations
+                                    .dictionary(Strings.singUpPasswordHint),
+                                (value) {
+                                  register.password = value;
+                                },
+                                (value) {
+                                  if (!Validator(value).isValidPassword) {
+                                    return localizations
+                                        .dictionary(Strings.loginErrorPassword);
+                                  }
+                                  return null;
+                                },
+                                obscureTextP,
+                                () {
+                                  setState(() {
+                                    obscureTextP = !obscureTextP;
+                                  });
+                                },
+                                Icons.remove_red_eye,
+                              ),
+                              _getInput(
+                                localizations.dictionary(
+                                    Strings.singUpRepeatPasswordHint),
+                                (value) {
+                                  register.repeatPassword = value;
+                                },
+                                (value) {
+                                  if (!Validator(value).isValidPassword) {
+                                    return localizations
+                                        .dictionary(Strings.loginErrorPassword);
+                                  }
+                                  return null;
+                                },
+                                obscureTextP2,
+                                () {
+                                  setState(() {
+                                    obscureTextP2 = !obscureTextP2;
+                                  });
+                                },
+                                Icons.remove_red_eye,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 25, vertical: 20),
+                                child: ButtonTextGradient(
+                                  height: 60,
+                                  size: 24,
+                                  onPressed: () {
+                                    if (_formKey.currentState!.validate()) {
+                                      _formKey.currentState!.save();
+                                      if (register.password ==
+                                          register.repeatPassword) {
+                                        BlocProvider.of<RegisterBloc>(context)
+                                            .add(RegisterStart(
+                                                user: register,
+                                                context: context));
+                                      } else {
+                                        AlertBottom(
+                                          localizations.dictionary(Strings
+                                              .singUpPasswordNotCoincidence),
+                                          Colors.orange,
+                                          1500,
+                                          context,
+                                        );
+                                      }
+                                    }
+                                  },
+                                  text: localizations
+                                      .dictionary(Strings.singUpButtonText),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _getInput(hint) {
+  Widget _getInput(hint, onSaved, validator, obscureText, iconAction, icon) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: InputIconText(
         hint: hint,
+        onSaved: onSaved,
+        obscureText: obscureText,
+        icon: icon,
+        onPressed: iconAction,
+        validator: validator,
       ),
     );
   }

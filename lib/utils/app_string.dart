@@ -17,4 +17,10 @@ enum Strings {
   singUpPasswordHint,
   singUpRepeatPasswordHint,
   singUpButtonText,
+  singUpPasswordNotCoincidence,
+  loginEmailFail,
+  loginPasswordFail,
+  registerDisplayedNameError,
+  failError,
+  singUpEmailRepeatFail,
 }

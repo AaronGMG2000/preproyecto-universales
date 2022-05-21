@@ -60,8 +60,8 @@ class AppTheme {
           borderRadius: const BorderRadius.all(Radius.circular(16)),
           borderSide: BorderSide(
             color: isDarkTheme
-                ? AppColor.shared.inputBorderError
-                : AppColor.shared.inputBorderErrorDark,
+                ? AppColor.shared.inputBorderErrorDark
+                : AppColor.shared.inputBorderError,
           ),
         ),
       ),
