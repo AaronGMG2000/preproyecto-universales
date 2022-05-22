@@ -9,7 +9,6 @@ import 'package:proyecto/utils/app_style.dart';
 import 'package:proyecto/utils/app_validation.dart';
 import 'package:proyecto/widget/widget_alert.dart';
 import 'package:proyecto/widget/widget_button.dart';
-import 'package:proyecto/widget/widget_check.dart';
 import 'package:proyecto/widget/widget_input.dart';
 
 import '../../bloc/register_bloc/register_bloc.dart';
@@ -41,12 +40,13 @@ class _SingUpPageState extends State<SingUpPage> {
               case RegisterFailure:
                 Navigator.of(context).pop();
                 final estado = state as RegisterFailure;
-                AlertBottom(estado.error, Colors.orange, 1500, context);
+                alertBottom(estado.error, Colors.orange, 1500, context);
                 break;
               case RegisterLoading:
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => const CircularProgressIndicator(),
+                    builder: (context) =>
+                        const Center(child: CircularProgressIndicator()),
                   ),
                 );
                 break;
@@ -177,7 +177,7 @@ class _SingUpPageState extends State<SingUpPage> {
                                                 user: register,
                                                 context: context));
                                       } else {
-                                        AlertBottom(
+                                        alertBottom(
                                           localizations.dictionary(Strings
                                               .singUpPasswordNotCoincidence),
                                           Colors.orange,
@@ -228,7 +228,6 @@ class _SingUpPageState extends State<SingUpPage> {
       builder: (context, constraints) {
         final scrollPosition = controller.positions.first;
         final diferenceHeight = constraints.maxHeight - collapsedHeight;
-        print(scrollPosition.userScrollDirection);
         if (scrollPosition.userScrollDirection == ScrollDirection.forward &&
             diferenceHeight > 25) {
           titlePaddingTop = titlePaddingTop + 2.5;

@@ -13,6 +13,54 @@ part 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc() : super(AppStarted()) {
+    on<LoginFacebookStart>((event, emit) async {
+      emit(LoginLoading());
+      late AppLocalizations localizations = AppLocalizations.of(event.context);
+      final authService =
+          Provider.of<AuthService>(event.context, listen: false);
+      await authService
+          .signInWithFacebook()
+          .then((user) => emit(LoginSuccess(user: user!)))
+          .catchError(
+        (error) {
+          emit(LoginFail(
+              error: localizations.dictionary(Strings.cancelOperation)));
+        },
+      );
+    });
+
+    on<LoginGoogleStart>((event, emit) async {
+      emit(LoginLoading());
+      late AppLocalizations localizations = AppLocalizations.of(event.context);
+      final authService =
+          Provider.of<AuthService>(event.context, listen: false);
+      await authService
+          .sigInWithGoogle()
+          .then((user) => emit(LoginSuccess(user: user!)))
+          .catchError(
+        (error) {
+          emit(LoginFail(
+              error: localizations.dictionary(Strings.cancelOperation)));
+        },
+      );
+    });
+
+    on<LoginTwitterStart>((event, emit) async {
+      emit(LoginLoading());
+      late AppLocalizations localizations = AppLocalizations.of(event.context);
+      final authService =
+          Provider.of<AuthService>(event.context, listen: false);
+      await authService
+          .signInWithTwitter()
+          .then((user) => emit(LoginSuccess(user: user!)))
+          .catchError(
+        (error) {
+          emit(LoginFail(
+              error: localizations.dictionary(Strings.cancelOperation)));
+        },
+      );
+    });
+
     on<LoginStart>((event, emit) async {
       emit(LoginLoading());
       late AppLocalizations localizations = AppLocalizations.of(event.context);

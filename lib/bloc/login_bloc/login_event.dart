@@ -14,3 +14,30 @@ class LoginStart extends LoginEvent {
   @override
   List<Object> get props => [login, rememberMe, context];
 }
+
+class LoginFacebookStart extends LoginEvent {
+  final BuildContext context;
+  LoginFacebookStart({
+    required this.context,
+  });
+  @override
+  List<Object> get props => [context];
+}
+
+class LoginGoogleStart extends LoginEvent {
+  final BuildContext context;
+  LoginGoogleStart({
+    required this.context,
+  });
+  @override
+  List<Object> get props => [context];
+}
+
+class LoginTwitterStart extends LoginEvent {
+  final BuildContext context;
+  LoginTwitterStart({
+    required this.context,
+  });
+  @override
+  List<Object> get props => [context];
+}

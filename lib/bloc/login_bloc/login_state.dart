@@ -15,3 +15,5 @@ class LoginSuccess extends LoginState {
 }
 
 class LoginLoading extends LoginState {}
+
+class ChangePassword extends LoginState {}

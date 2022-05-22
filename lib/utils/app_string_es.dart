@@ -28,4 +28,5 @@ Map<Strings, String> dictionaryEs = {
   Strings.singUpPasswordNotCoincidence: "Las contraseñas no coinciden",
   Strings.registerDisplayedNameError: "Ingrese un Nombre",
   Strings.singUpEmailRepeatFail: "El correo electrónico ya esta registrado",
+  Strings.cancelOperation: "Operación Cancelada",
 };

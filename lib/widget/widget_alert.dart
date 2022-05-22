@@ -1,7 +1,7 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 
-void AlertBottom(String text, Color color, int duration, context) {
+void alertBottom(String text, Color color, int duration, context) {
   Flushbar(
     message: text,
     backgroundColor: color,

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:proyecto/providers/auth_provider.dart';
-import 'package:proyecto/utils/app_string.dart';
 import 'package:proyecto/widget/widget_button.dart';
 
 class HomePage extends StatelessWidget {

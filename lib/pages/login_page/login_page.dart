@@ -40,12 +40,13 @@ class _LoginPageState extends State<LoginPage> {
             case LoginFail:
               Navigator.of(context).pop();
               final estado = state as LoginFail;
-              AlertBottom(estado.error, Colors.orange, 1500, context);
+              alertBottom(estado.error, Colors.orange, 1500, context);
               break;
             case LoginLoading:
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => const CircularProgressIndicator(),
+                  builder: (context) =>
+                      const Center(child: CircularProgressIndicator()),
                 ),
               );
               break;
@@ -271,14 +272,20 @@ class _LoginPageState extends State<LoginPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        getButtonIcon(
-                            "assets/icons/google.png", () {}, context),
+                        getButtonIcon("assets/icons/google.png", () {
+                          BlocProvider.of<LoginBloc>(context)
+                              .add(LoginGoogleStart(context: context));
+                        }, context),
                         const SizedBox(width: 20),
-                        getButtonIcon(
-                            "assets/icons/facebook.png", () {}, context),
+                        getButtonIcon("assets/icons/facebook.png", () {
+                          BlocProvider.of<LoginBloc>(context)
+                              .add(LoginFacebookStart(context: context));
+                        }, context),
                         const SizedBox(width: 20),
-                        getButtonIcon(
-                            "assets/icons/twitter.png", () {}, context),
+                        getButtonIcon("assets/icons/twitter.png", () {
+                          BlocProvider.of<LoginBloc>(context)
+                              .add(LoginTwitterStart(context: context));
+                        }, context),
                       ],
                     ),
                   )

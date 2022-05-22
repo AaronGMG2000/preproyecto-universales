@@ -23,4 +23,5 @@ enum Strings {
   registerDisplayedNameError,
   failError,
   singUpEmailRepeatFail,
+  cancelOperation,
 }
