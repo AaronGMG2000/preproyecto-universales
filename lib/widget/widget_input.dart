@@ -7,16 +7,18 @@ class InputIconText extends StatefulWidget {
   final bool readOnly;
   final String initialValue;
   final bool obscureText;
-  final VoidCallback? onChange;
   final VoidCallback? onPressed;
+  final Function(String? value)? onSaved;
+  final FormFieldValidator? validator;
   const InputIconText({
     this.hint = "",
     this.icon = Icons.close,
     this.readOnly = false,
     this.initialValue = "",
     this.obscureText = false,
-    this.onChange,
     this.onPressed,
+    this.onSaved,
+    this.validator,
     Key? key,
   }) : super(key: key);
 
@@ -32,8 +34,9 @@ class _InputIconTextState extends State<InputIconText> {
       padding: const EdgeInsets.symmetric(vertical: 15),
       child: TextFormField(
         initialValue: widget.initialValue,
+        onSaved: widget.onSaved,
         readOnly: widget.readOnly,
-        onTap: widget.onChange,
+        validator: widget.validator,
         obscureText: widget.obscureText,
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.all(20.0),

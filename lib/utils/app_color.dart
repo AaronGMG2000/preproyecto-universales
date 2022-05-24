@@ -23,4 +23,8 @@ class AppColor {
   final buttonIconColorDark = Colors.amber.shade800;
   final custoAppBarColor = const Color.fromARGB(255, 54, 54, 54);
   final custoAppBarColorDark = const Color.fromARGB(255, 34, 34, 34);
+  final backgroundHeaderSettings = Colors.blue;
+  final backgroundHeaderSettingsDark = const Color.fromRGBO(17, 17, 17, 1);
+  final backgroundSettins = Colors.white;
+  final backgroundSettinsDark = const Color.fromRGBO(29, 29, 29, 1);
 }

@@ -10,8 +10,10 @@ import 'package:provider/provider.dart';
 import 'package:proyecto/localization/locations.dart';
 import 'package:proyecto/pages/main_page.dart/main_page.dart';
 import 'package:proyecto/pages/splash_page/splash_page.dart';
+import 'package:proyecto/providers/auth_provider.dart';
 import 'package:proyecto/providers/language_provider.dart';
 import 'package:proyecto/providers/theme_provider.dart';
+import 'package:proyecto/utils/app_preferences.dart';
 import 'package:proyecto/utils/app_theme.dart';
 
 void main() {
@@ -53,7 +55,7 @@ class MyAppState extends State<MyApp> {
 
   Future<void> getCurrentAppLanguage() async {
     LanguageProvider().setLanguage =
-        await LanguageProvider().getDefaultLanguage();
+        await AppPreferences.shared.getIntPreference('defaultLanguage');
   }
 
   Future<void> getCurrentAppTheme() async {
@@ -75,10 +77,16 @@ class MyAppState extends State<MyApp> {
           return MultiProvider(
             providers: [
               ChangeNotifierProvider(create: (_) => ThemeProvider()),
-              ChangeNotifierProvider(create: (_) => LanguageProvider())
+              ChangeNotifierProvider(create: (_) => LanguageProvider()),
+              Provider<AuthService>(create: (_) => AuthService()),
             ],
-            child: Consumer2(builder: (context, ThemeProvider themeProvider,
-                LanguageProvider languageProvider, widget) {
+            child: Consumer3(builder: (
+              context,
+              ThemeProvider themeProvider,
+              LanguageProvider languageProvider,
+              AuthService authService,
+              widget,
+            ) {
               return MaterialApp(
                 locale: languageProvider.getLang,
                 localizationsDelegates: const [
