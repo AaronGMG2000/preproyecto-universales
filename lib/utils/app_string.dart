@@ -24,4 +24,10 @@ enum Strings {
   failError,
   singUpEmailRepeatFail,
   cancelOperation,
+  settingsText,
+  settingsSystem,
+  settingsTheme,
+  settingsLanguaje,
+  singUpNewPasswordTitle,
+  singUpNewPasswordSubtitle,
 }

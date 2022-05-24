@@ -68,26 +68,27 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           Provider.of<AuthService>(event.context, listen: false);
       await authService
           .signInWithEmailAndPassword(
-        event.login.email,
-        event.login.password,
-      )
-          .then((user) {
-        emit(LoginSuccess(user: user!));
-      }).catchError((error) {
-        String message = '';
-        switch (error.code) {
-          case 'user-not-found':
-            message = localizations.dictionary(Strings.loginEmailFail);
-            break;
-          case 'wrong-password':
-            message = localizations.dictionary(Strings.loginPasswordFail);
-            break;
-          default:
-            message = localizations.dictionary(Strings.failError);
-            break;
-        }
-        emit(LoginFail(error: message));
-      });
+            event.login.email,
+            event.login.password,
+          )
+          .then((user) => emit(LoginSuccess(user: user!)))
+          .catchError(
+        (error) {
+          String message = '';
+          switch (error.code) {
+            case 'user-not-found':
+              message = localizations.dictionary(Strings.loginEmailFail);
+              break;
+            case 'wrong-password':
+              message = localizations.dictionary(Strings.loginPasswordFail);
+              break;
+            default:
+              message = localizations.dictionary(Strings.failError);
+              break;
+          }
+          emit(LoginFail(error: message));
+        },
+      );
     });
   }
 }

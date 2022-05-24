@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:proyecto/localization/locations.dart';
 import 'package:proyecto/model/login_model.dart';
+import 'package:proyecto/pages/settings_page/settings_page.dart';
 import 'package:proyecto/pages/sing_up_page/sing_up_page.dart';
 import 'package:proyecto/utils/app_color.dart';
 import 'package:proyecto/utils/app_string.dart';
@@ -37,6 +38,9 @@ class _LoginPageState extends State<LoginPage> {
       child: BlocListener<LoginBloc, LoginState>(
         listener: (context, state) {
           switch (state.runtimeType) {
+            case LoginSuccess:
+              Navigator.of(context).pop();
+              break;
             case LoginFail:
               Navigator.of(context).pop();
               final estado = state as LoginFail;
@@ -49,9 +53,6 @@ class _LoginPageState extends State<LoginPage> {
                       const Center(child: CircularProgressIndicator()),
                 ),
               );
-              break;
-            case LoginSuccess:
-              Navigator.of(context).pop();
               break;
           }
         },
@@ -248,9 +249,28 @@ class _LoginPageState extends State<LoginPage> {
                 Container(
                   width: double.infinity,
                   alignment: Alignment.centerLeft,
-                  padding: EdgeInsets.fromLTRB(20, titlePaddingTop, 10, 20),
-                  child: Text(localizations.dictionary(Strings.loginTitle),
-                      style: AppStyle.shared.fonts.titleText(context)),
+                  padding: EdgeInsets.fromLTRB(20, titlePaddingTop, 10, 10),
+                  child: Row(
+                    children: [
+                      Text(localizations.dictionary(Strings.loginTitle),
+                          style: AppStyle.shared.fonts.titleText(context)),
+                      const Expanded(child: SizedBox()),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.settings,
+                          size: 32,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const SettingsPage()),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

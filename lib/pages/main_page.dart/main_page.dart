@@ -5,6 +5,7 @@ import 'package:proyecto/pages/home_page/home_page.dart';
 import 'package:proyecto/pages/login_page/login_page.dart';
 import 'package:proyecto/pages/splash_page/splash_page.dart';
 import 'package:proyecto/providers/auth_provider.dart';
+import 'package:proyecto/utils/app_firebase.dart';
 
 class MainPage extends StatelessWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -21,11 +22,25 @@ class MainPage extends StatelessWidget {
             if (user == null) {
               return const LoginPage();
             }
-            return const HomePage();
+            return FutureBuilder(
+                future: getUser(user.id),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    if (snapshot.data == null) {
+                      return const SplashPage();
+                    }
+                    return const HomePage();
+                  }
+                  return const SplashPage();
+                });
           }
           return const SplashPage();
         },
       ),
     );
+  }
+
+  Future<User> getUser(String id) async {
+    return await AppDataBase.shared.getUser(id);
   }
 }

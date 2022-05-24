@@ -11,6 +11,61 @@ part 'register_event.dart';
 
 class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   RegisterBloc() : super(AppStarted()) {
+    on<RegisterFacebookStart>((event, emit) async {
+      emit(RegisterLoading());
+      late AppLocalizations localizations = AppLocalizations.of(event.context);
+      final authService =
+          Provider.of<AuthService>(event.context, listen: false);
+      await authService
+          .signInWithFacebook()
+          .then((user) => emit(RegisterSuccess()))
+          .catchError(
+        (error) {
+          emit(RegisterFailure(
+              error: localizations.dictionary(Strings.cancelOperation)));
+        },
+      );
+    });
+
+    on<RegisterGoogleStart>((event, emit) async {
+      emit(RegisterLoading());
+      late AppLocalizations localizations = AppLocalizations.of(event.context);
+      final authService =
+          Provider.of<AuthService>(event.context, listen: false);
+      await authService
+          .sigInWithGoogle()
+          .then((user) => emit(RegisterSuccess()))
+          .catchError(
+        (error) {
+          emit(RegisterFailure(
+              error: localizations.dictionary(Strings.cancelOperation)));
+        },
+      );
+    });
+
+    on<RegisterTwitterStart>((event, emit) async {
+      emit(RegisterLoading());
+      late AppLocalizations localizations = AppLocalizations.of(event.context);
+      final authService =
+          Provider.of<AuthService>(event.context, listen: false);
+      await authService
+          .signInWithTwitter()
+          .then((user) => emit(RegisterSuccess()))
+          .catchError(
+        (error) {
+          emit(RegisterFailure(
+              error: localizations.dictionary(Strings.cancelOperation)));
+        },
+      );
+    });
+
+    on<CreatePassword>((event, emit) async {
+      late AppLocalizations localizations = AppLocalizations.of(event.context);
+      final authService =
+          Provider.of<AuthService>(event.context, listen: false);
+      emit(RegisterLoading());
+      emit(CreatePasswordSuccess());
+    });
     on<RegisterStart>((event, emit) async {
       emit(RegisterLoading());
       late AppLocalizations localizations = AppLocalizations.of(event.context);
@@ -18,7 +73,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
           Provider.of<AuthService>(event.context, listen: false);
       await authService
           .createUserWithEmailAndPassword(
-              event.user.email, event.user.password, event.user.displayName)
+              event.user.email, event.user.password, event.user.displayName, "")
           .then(
         (user) {
           emit(RegisterSuccess());
@@ -27,7 +82,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         String message = '';
         switch (error.code) {
           case 'email-already-exists':
-            message = localizations.dictionary(Strings.loginEmailFail);
+            message = localizations.dictionary(Strings.singUpEmailRepeatFail);
             break;
           default:
             message = localizations.dictionary(Strings.failError);

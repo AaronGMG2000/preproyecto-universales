@@ -13,6 +13,7 @@ import 'package:proyecto/pages/splash_page/splash_page.dart';
 import 'package:proyecto/providers/auth_provider.dart';
 import 'package:proyecto/providers/language_provider.dart';
 import 'package:proyecto/providers/theme_provider.dart';
+import 'package:proyecto/utils/app_preferences.dart';
 import 'package:proyecto/utils/app_theme.dart';
 
 void main() {
@@ -54,7 +55,7 @@ class MyAppState extends State<MyApp> {
 
   Future<void> getCurrentAppLanguage() async {
     LanguageProvider().setLanguage =
-        await LanguageProvider().getDefaultLanguage();
+        await AppPreferences.shared.getIntPreference('defaultLanguage');
   }
 
   Future<void> getCurrentAppTheme() async {

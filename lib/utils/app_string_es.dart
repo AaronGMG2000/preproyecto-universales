@@ -29,4 +29,10 @@ Map<Strings, String> dictionaryEs = {
   Strings.registerDisplayedNameError: "Ingrese un Nombre",
   Strings.singUpEmailRepeatFail: "El correo electrónico ya esta registrado",
   Strings.cancelOperation: "Operación Cancelada",
+  Strings.settingsText: "Configuración",
+  Strings.settingsSystem: "Sistema",
+  Strings.settingsTheme: "Tema",
+  Strings.singUpNewPasswordTitle: "Contraseña",
+  Strings.singUpNewPasswordSubtitle: "Para continuar debe crear una contraseña",
+  Strings.settingsLanguaje: "Lenguaje",
 };

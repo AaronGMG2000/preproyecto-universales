@@ -45,23 +45,68 @@ class AppDataBase {
     return response;
   }
 
-  Future<String> addUserToChanel(String chanel, String nameChanel,
-      String userId, String displayName) async {
+  Future<void> setChange(User user) async {
+    await database.child('Usuarios').child(user.id).update({'change': true});
+  }
+
+  Future<User> getUser(String id) async {
+    final user = database.child('Usuarios/$id');
+    late User retorno = User();
+    await user.get().then((value) {
+      if (value.value != null) {
+        final data = Map<String, dynamic>.from(value.value as dynamic);
+        retorno = User(
+          id: id,
+          email: data['correo'],
+          displayName: data['nombre'],
+          photoUrl: data['urlImage'],
+          change: data['change'],
+          canales: Map<String, dynamic>.from(data['Canales'] as dynamic),
+        );
+      }
+    });
+    return retorno;
+  }
+
+  Future<String> addUser(User user) async {
     String message = "Usuario agregado con exito";
     try {
+      final userF = database.child("Usuarios/${user.id}");
+      await userF.get().then((value) {
+        if (value.value == null) {
+          userF.set({
+            'nombre': user.displayName,
+            'correo': user.email,
+            'urlImage': user.photoUrl,
+            'estado': true,
+            'change': false,
+          });
+        }
+      });
+    } catch (e) {
+      message = "Error al agregar el usuario";
+    }
+    return message;
+  }
+
+  Future<String> addUserToChanel(
+      String chanel, String nameChanel, User user) async {
+    String message = "Usuario agregado al canal con exito";
+    try {
+      await addUser(user);
       await database
           .child("Canales")
           .child(chanel)
           .child('usuarios')
-          .child(userId)
-          .set(displayName);
+          .child(user.id)
+          .set(user.id);
       await database
           .child("Usuarios")
-          .child(userId)
-          .child(chanel)
+          .child(user.id)
+          .child("Canales/$chanel")
           .set(nameChanel);
     } catch (e) {
-      message = "Error al agregar el usuario";
+      message = "Error al agregar el usuario al canal";
     }
     return message;
   }

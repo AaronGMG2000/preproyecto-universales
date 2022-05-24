@@ -14,3 +14,5 @@ class RegisterFailure extends RegisterState {
 }
 
 class ChangePassword extends RegisterState {}
+
+class CreatePasswordSuccess extends RegisterState {}

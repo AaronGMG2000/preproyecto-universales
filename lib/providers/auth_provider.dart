@@ -16,12 +16,12 @@ class AuthService {
       id: user.uid,
       email: user.email ?? '',
       displayName: user.displayName ?? '',
+      photoUrl: user.photoURL ?? '',
     );
   }
 
-  Stream<User?>? get user {
-    return _firebaseAuth.authStateChanges().map(_userfromFirebase);
-  }
+  Stream<User?>? get user =>
+      _firebaseAuth.authStateChanges().map(_userfromFirebase);
 
   Future<void> createGeneralChanel(User user) async {
     bool create = await AppDataBase.shared
@@ -29,11 +29,9 @@ class AuthService {
     if (create) {
       await AppDataBase.shared.newMessage(
           "General", "Bienvenido a la comunidad", user.id, "notification");
-      await AppDataBase.shared
-          .addUserToChanel("General", "General", user.id, user.displayName);
+      await AppDataBase.shared.addUserToChanel("General", "General", user);
     } else {
-      await AppDataBase.shared
-          .addUserToChanel("General", "General", user.id, user.displayName);
+      await AppDataBase.shared.addUserToChanel("General", "General", user);
     }
   }
 
@@ -43,7 +41,8 @@ class AuthService {
         auth.FacebookAuthProvider.credential(loginResult.accessToken!.token);
     final auth.User? user =
         (await _firebaseAuth.signInWithCredential(credential)).user;
-    return _userfromFirebase(user);
+    await createGeneralChanel(_userfromFirebase(user)!);
+    return await AppDataBase.shared.getUser(user!.uid);
   }
 
   Future<User?> signInWithTwitter() async {
@@ -57,7 +56,8 @@ class AuthService {
         secret: lgoinResult.authTokenSecret!);
     final auth.User? user =
         (await _firebaseAuth.signInWithCredential(twitterAuthCredentials)).user;
-    return _userfromFirebase(user);
+    await createGeneralChanel(_userfromFirebase(user)!);
+    return await AppDataBase.shared.getUser(user!.uid);
   }
 
   Future<User?> sigInWithGoogle() async {
@@ -69,42 +69,38 @@ class AuthService {
     );
     final auth.User? user =
         (await _firebaseAuth.signInWithCredential(credential)).user;
-    return _userfromFirebase(user);
-  }
-
-  Future<User?> createUserWithFacebook() async {
-    final LoginResult loginResult = await FacebookAuth.instance.login();
-    final auth.OAuthCredential credential =
-        auth.FacebookAuthProvider.credential(loginResult.accessToken!.token);
-    final auth.User? user =
-        (await _firebaseAuth.signInWithCredential(credential)).user;
     await createGeneralChanel(_userfromFirebase(user)!);
-    return _userfromFirebase(user);
+    return await AppDataBase.shared.getUser(user!.uid);
   }
 
   Future<User?> signInWithEmailAndPassword(
     String email,
     String password,
   ) async {
-    final credential = await _firebaseAuth.signInWithEmailAndPassword(
+    await _firebaseAuth.signInWithEmailAndPassword(
       email: email,
       password: password,
     );
-    return _userfromFirebase(credential.user);
+    String id = _firebaseAuth.currentUser!.uid;
+    return await AppDataBase.shared.getUser(id);
   }
 
   Future<User?> createUserWithEmailAndPassword(
     String email,
     String password,
     String displayName,
+    String photoUrl,
   ) async {
     final credential = await _firebaseAuth.createUserWithEmailAndPassword(
       email: email,
       password: password,
     );
     await credential.user?.updateDisplayName(displayName);
-    await createGeneralChanel(_userfromFirebase(credential.user)!);
-    return _userfromFirebase(credential.user);
+    await credential.user?.updatePhotoURL(photoUrl);
+    await createGeneralChanel(_userfromFirebase(_firebaseAuth.currentUser)!);
+    await AppDataBase.shared
+        .setChange(_userfromFirebase(_firebaseAuth.currentUser)!);
+    return await AppDataBase.shared.getUser(_firebaseAuth.currentUser!.uid);
   }
 
   Future<void> signOut() async {

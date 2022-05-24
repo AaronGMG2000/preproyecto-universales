@@ -27,4 +27,10 @@ Map<Strings, String> dictionaryEn = {
   Strings.registerDisplayedNameError: "Enter a name",
   Strings.singUpEmailRepeatFail: "The email is already registered",
   Strings.cancelOperation: "Operation Canceled",
+  Strings.settingsText: "Settings",
+  Strings.settingsSystem: "System",
+  Strings.settingsTheme: "Theme",
+  Strings.singUpNewPasswordTitle: "Password",
+  Strings.singUpNewPasswordSubtitle: "To continue you must create a password",
+  Strings.settingsLanguaje: "Languaje",
 };

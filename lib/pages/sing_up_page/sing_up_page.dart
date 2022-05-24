@@ -264,6 +264,7 @@ class _SingUpPageState extends State<SingUpPage> {
                       IconButton(
                         icon: const Icon(
                           Icons.close,
+                          color: Colors.white,
                           size: 32,
                         ),
                         onPressed: () {
@@ -293,14 +294,20 @@ class _SingUpPageState extends State<SingUpPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        getButtonIcon(
-                            "assets/icons/google.png", () {}, context),
+                        getButtonIcon("assets/icons/google.png", () {
+                          BlocProvider.of<RegisterBloc>(context)
+                              .add(RegisterGoogleStart(context: context));
+                        }, context),
                         const SizedBox(width: 20),
-                        getButtonIcon(
-                            "assets/icons/facebook.png", () {}, context),
+                        getButtonIcon("assets/icons/facebook.png", () {
+                          BlocProvider.of<RegisterBloc>(context)
+                              .add(RegisterFacebookStart(context: context));
+                        }, context),
                         const SizedBox(width: 20),
-                        getButtonIcon(
-                            "assets/icons/twitter.png", () {}, context),
+                        getButtonIcon("assets/icons/twitter.png", () {
+                          BlocProvider.of<RegisterBloc>(context)
+                              .add(RegisterTwitterStart(context: context));
+                        }, context),
                       ],
                     ),
                   )

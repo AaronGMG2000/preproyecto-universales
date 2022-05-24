@@ -5,21 +5,33 @@ import 'package:proyecto/utils/app_preferences.dart';
 class LanguageProvider with ChangeNotifier {
   static Locale? _locale;
   Future<Locale> getDefaultLanguage() async {
-    final String? saveLang =
-        await AppPreferences.shared.getStringPreference('defaultLanguage');
-    if (saveLang != null) {
-      return Locale(saveLang, '');
-    } else {
-      _locale = Locale(Platform.localeName.substring(0, 2), '');
-      return _locale!;
+    final int? number =
+        await AppPreferences.shared.getIntPreference('defaultLanguage');
+    switch (number) {
+      case 2:
+        return const Locale('es', '');
+      case 1:
+        return const Locale('en', '');
+      default:
+        return Locale(Platform.localeName.substring(0, 2), '');
     }
   }
 
   Locale get getLang => _locale!;
 
-  set setLanguage(Locale lang) {
-    _locale = lang;
-    AppPreferences.shared.setPreference('defaultLanguage', lang.languageCode);
+  set setLanguage(int? lang) {
+    switch (lang) {
+      case 2:
+        _locale = const Locale('es', '');
+        break;
+      case 1:
+        _locale = const Locale('en', '');
+        break;
+      default:
+        _locale = Locale(Platform.localeName.substring(0, 2), '');
+        break;
+    }
+    AppPreferences.shared.setPreference('defaultLanguage', lang);
     notifyListeners();
   }
 }
