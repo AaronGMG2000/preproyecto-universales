@@ -39,20 +39,12 @@ class _LoginPageState extends State<LoginPage> {
         listener: (context, state) {
           switch (state.runtimeType) {
             case LoginSuccess:
-              Navigator.of(context).pop();
               break;
             case LoginFail:
-              Navigator.of(context).pop();
               final estado = state as LoginFail;
               alertBottom(estado.error, Colors.orange, 1500, context);
               break;
             case LoginLoading:
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) =>
-                      const Center(child: CircularProgressIndicator()),
-                ),
-              );
               break;
           }
         },

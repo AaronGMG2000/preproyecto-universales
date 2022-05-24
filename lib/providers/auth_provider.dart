@@ -35,6 +35,12 @@ class AuthService {
     }
   }
 
+  Future<void> changePassword(String password) async {
+    await _firebaseAuth.currentUser!.updatePassword(password);
+    await AppDataBase.shared
+        .setChange(_userfromFirebase(_firebaseAuth.currentUser)!);
+  }
+
   Future<User?> signInWithFacebook() async {
     final LoginResult loginResult = await FacebookAuth.instance.login();
     final auth.OAuthCredential credential =

@@ -30,4 +30,5 @@ enum Strings {
   settingsLanguaje,
   singUpNewPasswordTitle,
   singUpNewPasswordSubtitle,
+  cancelButtonText,
 }

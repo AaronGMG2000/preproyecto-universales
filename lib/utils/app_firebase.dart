@@ -7,6 +7,9 @@ class AppDataBase {
   static final AppDataBase shared = AppDataBase._privateConstructor();
   final database = FirebaseDatabase.instance.ref();
 
+  Stream<DatabaseEvent> userStrem(String id) =>
+      FirebaseDatabase.instance.ref().child('Usuarios').child(id).onValue;
+
   Future<void> newMessage(
       String chanel, String message, String userId, String type) async {
     Uuid uuid = const Uuid();
@@ -55,13 +58,17 @@ class AppDataBase {
     await user.get().then((value) {
       if (value.value != null) {
         final data = Map<String, dynamic>.from(value.value as dynamic);
+        Map<String, dynamic> canales = {};
+        if (data['Canales'] != null) {
+          canales = Map<String, dynamic>.from(data['Canales']);
+        }
         retorno = User(
           id: id,
           email: data['correo'],
           displayName: data['nombre'],
           photoUrl: data['urlImage'],
           change: data['change'],
-          canales: Map<String, dynamic>.from(data['Canales'] as dynamic),
+          canales: canales,
         );
       }
     });
@@ -135,39 +142,27 @@ class AppDataBase {
         .once();
   }
 
-  Future<dynamic> getChanelInUser(String userId) async {
-    return await database.child("Usuarios").child(userId).once();
+  Stream<DatabaseEvent> getChanelInUser(String userId) =>
+      database.child("Usuarios").child(userId).child("Canales").onValue;
+
+  Future<DatabaseEvent> getChanel(String chanel) async {
+    return (await database.child("Canales").child(chanel).once());
   }
 
-  Future<Map<String, dynamic>> getChanel(String chanel) async {
-    return (await database.child("Canales").child(chanel).once())
-        as Map<String, dynamic>;
-  }
+  Stream<DatabaseEvent> getChanels() => database.child("Canales").onValue;
 
-  Future<Map<String, dynamic>> getChanels(String chanel) async {
-    return (await database.child("Canales").once()) as Map<String, dynamic>;
-  }
+  Stream<DatabaseEvent> getUsers(String chanel) =>
+      database.child("Usuarios").onValue;
 
-  Future<Map<String, dynamic>> getUsers(String chanel) async {
-    return (await database.child("Usuarios").once()) as Map<String, dynamic>;
-  }
+  Stream<DatabaseEvent> getAdministrators(String chanel) =>
+      database.child("Canales").child(chanel).child('administradores').onValue;
 
-  Future<Map<String, dynamic>> getAdministrators(String chanel) async {
-    return (await database
-        .child("Canales")
-        .child(chanel)
-        .child('administradores')
-        .once()) as Map<String, dynamic>;
-  }
-
-  Future<Map<String, dynamic>> getMessages(String chanel) async {
-    return (await database
-        .child("Canales")
-        .child(chanel)
-        .child('mensajes')
-        .orderByChild('fecha_envio')
-        .once()) as Map<String, dynamic>;
-  }
+  Stream<DatabaseEvent> getMessages(String chanel) => database
+      .child("Canales")
+      .child(chanel)
+      .child('mensajes')
+      .orderByChild('fecha_envio')
+      .onValue;
 
   Future<void> deleteChanel(String chanel) async {
     await database.child("Canales").child(chanel).remove();

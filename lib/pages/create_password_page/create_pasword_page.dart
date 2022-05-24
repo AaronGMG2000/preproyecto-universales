@@ -2,13 +2,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:proyecto/localization/locations.dart';
-import 'package:proyecto/providers/language_provider.dart';
-import 'package:proyecto/providers/theme_provider.dart';
+import 'package:proyecto/model/login_model.dart';
+import 'package:proyecto/providers/auth_provider.dart';
 import 'package:proyecto/utils/app_color.dart';
-import 'package:proyecto/utils/app_preferences.dart';
 import 'package:proyecto/utils/app_string.dart';
+import 'package:proyecto/utils/app_validation.dart';
 import 'package:proyecto/widget/widget_alert.dart';
-import 'package:proyecto/widget/widget_dropdown.dart';
+import 'package:proyecto/widget/widget_button.dart';
+import 'package:proyecto/widget/widget_input.dart';
 
 import '../../bloc/register_bloc/register_bloc.dart';
 
@@ -27,9 +28,13 @@ class CreatePasswordPageState extends State<CreatePasswordPage> {
     super.initState();
   }
 
+  late AppLocalizations localizations = AppLocalizations.of(context);
+  final Login register = Login();
+  final _formKey = GlobalKey<FormState>();
+  late bool obscureTextP = true;
+  late bool obscureTextP2 = true;
   @override
   Widget build(BuildContext context) {
-    final locatizations = AppLocalizations(Localizations.localeOf(context));
     final isDark = Theme.of(context).primaryColor == Colors.white;
     return Scaffold(
       appBar: AppBar(
@@ -47,7 +52,6 @@ class CreatePasswordPageState extends State<CreatePasswordPage> {
           listener: (context, state) {
             switch (state.runtimeType) {
               case CreatePasswordSuccess:
-                Navigator.of(context).pop();
                 break;
               case RegisterFailure:
                 Navigator.of(context).pop();
@@ -55,12 +59,6 @@ class CreatePasswordPageState extends State<CreatePasswordPage> {
                 alertBottom(estado.error, Colors.orange, 1500, context);
                 break;
               case RegisterLoading:
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        const Center(child: CircularProgressIndicator()),
-                  ),
-                );
                 break;
             }
           },
@@ -74,7 +72,7 @@ class CreatePasswordPageState extends State<CreatePasswordPage> {
                         margin: const EdgeInsets.only(top: 40, left: 50),
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          locatizations
+                          localizations
                               .dictionary(Strings.singUpNewPasswordTitle),
                           style: const TextStyle(
                             fontSize: 26,
@@ -88,7 +86,7 @@ class CreatePasswordPageState extends State<CreatePasswordPage> {
                         margin: const EdgeInsets.only(top: 20, left: 50),
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          locatizations
+                          localizations
                               .dictionary(Strings.singUpNewPasswordSubtitle),
                           style: const TextStyle(
                             fontSize: 14,
@@ -101,7 +99,7 @@ class CreatePasswordPageState extends State<CreatePasswordPage> {
                     ],
                   ),
                   Container(
-                    margin: const EdgeInsets.only(top: 200),
+                    margin: const EdgeInsets.only(top: 175),
                     decoration: BoxDecoration(
                       color: isDark
                           ? AppColor.shared.backgroundSettinsDark
@@ -112,114 +110,106 @@ class CreatePasswordPageState extends State<CreatePasswordPage> {
                       ),
                     ),
                     child: ListView(
-                      scrollDirection: Axis.vertical,
                       children: [
                         Column(
                           children: [
-                            Container(
-                              margin: const EdgeInsets.only(
-                                top: 50,
-                                left: 30,
-                              ),
-                              alignment: Alignment.centerLeft,
-                              child: const Text(
-                                "Lenguaje",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontFamily: "SegoeUI",
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              margin: const EdgeInsets.only(
-                                top: 20,
-                              ),
-                              child: Dropdownbutton1(
-                                initialValue: locatizations
-                                    .dictionary(Strings.settingsSystem),
-                                getValue: () async {
-                                  int? number = await AppPreferences.shared
-                                      .getIntPreference("defaultLanguage");
-                                  switch (number) {
-                                    case 2:
-                                      return "es";
-                                    case 1:
-                                      return "en";
-                                    default:
-                                      return "Sistema";
-                                  }
-                                },
-                                items: const ["Sistema", "es", "en"],
-                                onChanged: (value) async {
-                                  LanguageProvider languageProvider =
-                                      Provider.of<LanguageProvider>(context,
-                                          listen: false);
-                                  switch (value) {
-                                    case "es":
-                                      languageProvider.setLanguage = 2;
-                                      break;
-                                    case "en":
-                                      languageProvider.setLanguage = 1;
-                                      break;
-                                    default:
-                                      languageProvider.setLanguage = 0;
-                                      break;
-                                  }
-                                },
-                              ),
-                            ),
-                            Container(
-                              margin: const EdgeInsets.only(
-                                top: 50,
-                                left: 30,
-                              ),
-                              alignment: Alignment.centerLeft,
-                              child: const Text(
-                                "Tema",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontFamily: "SegoeUI",
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              margin: const EdgeInsets.only(
-                                top: 20,
-                              ),
-                              child: Dropdownbutton1(
-                                initialValue: locatizations
-                                    .dictionary(Strings.settingsSystem),
-                                getValue: () async {
-                                  int? value = await AppPreferences.shared
-                                      .getIntPreference("defaultTheme");
-                                  switch (value) {
-                                    case 2:
-                                      return "Dark";
-                                    case 1:
-                                      return "Light";
-                                    default:
-                                      return "Sistema";
-                                  }
-                                },
-                                items: const ["Sistema", "Dark", "Light"],
-                                onChanged: (value) async {
-                                  ThemeProvider themeProvider =
-                                      Provider.of<ThemeProvider>(context,
-                                          listen: false);
-                                  switch (value) {
-                                    case "Dark":
-                                      themeProvider.setTheme = 2;
-                                      break;
-                                    case "Light":
-                                      themeProvider.setTheme = 1;
-                                      break;
-                                    default:
-                                      themeProvider.setTheme = 0;
-                                      break;
-                                  }
-                                },
+                            const SizedBox(height: 100),
+                            Form(
+                              key: _formKey,
+                              child: Column(
+                                children: [
+                                  _getInput(
+                                    localizations
+                                        .dictionary(Strings.singUpPasswordHint),
+                                    (value) {
+                                      register.password = value;
+                                    },
+                                    (value) {
+                                      if (!Validator(value).isValidPassword) {
+                                        return localizations.dictionary(
+                                            Strings.loginErrorPassword);
+                                      }
+                                      return null;
+                                    },
+                                    obscureTextP,
+                                    () {
+                                      setState(() {
+                                        obscureTextP = !obscureTextP;
+                                      });
+                                    },
+                                    Icons.remove_red_eye,
+                                  ),
+                                  _getInput(
+                                    localizations.dictionary(
+                                        Strings.singUpRepeatPasswordHint),
+                                    (value) {
+                                      register.repeatPassword = value;
+                                    },
+                                    (value) {
+                                      if (!Validator(value).isValidPassword) {
+                                        return localizations.dictionary(
+                                            Strings.loginErrorPassword);
+                                      }
+                                      return null;
+                                    },
+                                    obscureTextP2,
+                                    () {
+                                      setState(() {
+                                        obscureTextP2 = !obscureTextP2;
+                                      });
+                                    },
+                                    Icons.remove_red_eye,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 25, vertical: 20),
+                                    child: ButtonTextGradient(
+                                      height: 60,
+                                      size: 24,
+                                      onPressed: () {
+                                        if (_formKey.currentState!.validate()) {
+                                          _formKey.currentState!.save();
+                                          if (register.password ==
+                                              register.repeatPassword) {
+                                            BlocProvider.of<RegisterBloc>(
+                                                    context)
+                                                .add(CreatePassword(
+                                                    user: register,
+                                                    context: context));
+                                          } else {
+                                            alertBottom(
+                                              localizations.dictionary(Strings
+                                                  .singUpPasswordNotCoincidence),
+                                              Colors.orange,
+                                              1500,
+                                              context,
+                                            );
+                                          }
+                                        }
+                                      },
+                                      text: localizations
+                                          .dictionary(Strings.singUpButtonText),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 25, vertical: 0),
+                                    child: ButtonTextGradient(
+                                      height: 60,
+                                      size: 24,
+                                      color1: const Color(0xff32323f),
+                                      color2: const Color(0xff32323f),
+                                      onPressed: () {
+                                        final authService =
+                                            Provider.of<AuthService>(context,
+                                                listen: false);
+                                        authService.signOut();
+                                      },
+                                      text: localizations
+                                          .dictionary(Strings.cancelButtonText),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
@@ -232,6 +222,20 @@ class CreatePasswordPageState extends State<CreatePasswordPage> {
             },
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _getInput(hint, onSaved, validator, obscureText, iconAction, icon) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: InputIconText(
+        hint: hint,
+        onSaved: onSaved,
+        obscureText: obscureText,
+        icon: icon,
+        onPressed: iconAction,
+        validator: validator,
       ),
     );
   }

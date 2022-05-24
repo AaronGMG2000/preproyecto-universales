@@ -33,4 +33,5 @@ Map<Strings, String> dictionaryEn = {
   Strings.singUpNewPasswordTitle: "Password",
   Strings.singUpNewPasswordSubtitle: "To continue you must create a password",
   Strings.settingsLanguaje: "Languaje",
+  Strings.cancelButtonText: "Cancel",
 };
