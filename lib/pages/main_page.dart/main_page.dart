@@ -29,12 +29,17 @@ class MainPage extends StatelessWidget {
               builder: (BuildContext context, snapshot) {
                 if (snapshot.hasData) {
                   final DatabaseEvent data = snapshot.data as DatabaseEvent;
-                  User? user = getUser(data.snapshot.key as String,
-                      data.snapshot.value as dynamic);
-                  if (user.change) {
-                    return HomePage(user: user);
+                  if (data.snapshot.value != null) {
+                    User user = User();
+                    user.fromMap(data.snapshot.key as String,
+                        data.snapshot.value as dynamic);
+                    if (user.change) {
+                      return HomePage(user: user);
+                    } else {
+                      return const CreatePasswordPage();
+                    }
                   } else {
-                    return const CreatePasswordPage();
+                    return const SplashPage();
                   }
                 } else {
                   return const SplashPage();
@@ -45,17 +50,6 @@ class MainPage extends StatelessWidget {
           return const SplashPage();
         },
       ),
-    );
-  }
-
-  User getUser(String key, dynamic mapUser) {
-    return User(
-      id: key,
-      email: mapUser['correo'] as String,
-      displayName: mapUser['nombre'] as String,
-      photoUrl: mapUser['urlImage'] as String,
-      change: mapUser['change'] as bool,
-      estado: mapUser['estado'] as bool,
     );
   }
 }

@@ -36,4 +36,13 @@ Map<Strings, String> dictionaryEs = {
   Strings.singUpNewPasswordSubtitle: "Para continuar debe crear una contraseña",
   Strings.settingsLanguaje: "Lenguaje",
   Strings.cancelButtonText: "Cancelar",
+  Strings.profileText: "Perfil",
+  Strings.signOutText: "Cerrar sesión",
+  Strings.chanelTitle: "Canal",
+  Strings.chanelDescription: "Descripción",
+  Strings.chanelButtonText: "Crear canal",
+  Strings.chanelName: "Nombre",
+  Strings.chanelDescriptionError: "Ingrese una descripción",
+  Strings.chanelFail: "El canal ya existe",
+  Strings.editMessage: "Editar mensaje",
 };

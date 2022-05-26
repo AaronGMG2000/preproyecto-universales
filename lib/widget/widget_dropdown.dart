@@ -75,7 +75,6 @@ class Dropdownbutton1State extends State<Dropdownbutton1> {
         }).toList(),
         onChanged: (item) {
           setState(() {
-            selectedItem = item;
             widget.onChanged(item);
           });
         },

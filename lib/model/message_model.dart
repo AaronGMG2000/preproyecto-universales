@@ -1,12 +1,9 @@
-import 'package:proyecto/model/user_model.dart';
-import 'package:proyecto/utils/app_firebase.dart';
-
 class Message {
   String id;
   String texto;
   String type;
   late DateTime fechaEnvio;
-  late User usuario;
+  late String usuario;
 
   Message({
     this.id = '',
@@ -14,14 +11,15 @@ class Message {
     this.type = '',
   });
 
-  static Future<Message> fromMap(String key, Map data) async {
+  static Message fromMap(String key, Map data) {
     Message message = Message();
     message.id = key;
-    message.texto = data['texto'] as String;
-    message.type = data['type'] as String;
-    message.fechaEnvio =
-        DateTime.fromMillisecondsSinceEpoch(data['fecha_envio'] as int);
-    message.usuario = await AppDataBase.shared.getUser(key);
+    message.texto = data['texto'] == null ? '' : data['texto'] as String;
+    message.type = data['type'] == null ? 'text' : data['type'] as String;
+    message.fechaEnvio = data['fecha_envio'] == null
+        ? DateTime.now()
+        : DateTime.fromMillisecondsSinceEpoch(data['fecha_envio'] as int);
+    message.usuario = data['usuario'] == null ? '' : data['usuario'] as String;
     return message;
   }
 }

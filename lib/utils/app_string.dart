@@ -31,4 +31,13 @@ enum Strings {
   singUpNewPasswordTitle,
   singUpNewPasswordSubtitle,
   cancelButtonText,
+  profileText,
+  signOutText,
+  chanelTitle,
+  chanelDescription,
+  chanelButtonText,
+  chanelName,
+  chanelDescriptionError,
+  chanelFail,
+  editMessage,
 }

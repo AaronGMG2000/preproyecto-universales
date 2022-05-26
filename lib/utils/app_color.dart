@@ -31,4 +31,6 @@ class AppColor {
   final backgroundAppBarDark = const Color(0xFF212d3b);
   final backgroundHomeDark = const Color(0xFF1d2733);
   final backgroundHome = Colors.white;
+  final backgroundModal = const Color(0xFFCCCCCC);
+  final backgroundModalDark = const Color(0xFF1d2733);
 }

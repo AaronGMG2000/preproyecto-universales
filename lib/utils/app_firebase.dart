@@ -37,7 +37,7 @@ class AppDataBase {
         chanel.set({
           'nombre': chanelName,
           'descripcion': description,
-          'fecha_creación': DateTime.now().millisecondsSinceEpoch,
+          'fecha_creacion': DateTime.now().millisecondsSinceEpoch,
           'creador': user.id,
           'administradores': {user.id: user.id},
           'usuarios': {user.id: user.id},
@@ -52,27 +52,24 @@ class AppDataBase {
     await database.child('Usuarios').child(user.id).update({'change': true});
   }
 
+  Future<void> setOnline(User user, bool state) async {
+    await database.child('Usuarios').child(user.id).update({'estado': state});
+  }
+
   Future<User> getUser(String id) async {
     final user = database.child('Usuarios/$id');
     late User retorno = User();
     await user.get().then((value) {
       if (value.value != null) {
         final data = Map<String, dynamic>.from(value.value as dynamic);
-        Map<String, dynamic> canales = {};
-        if (data['Canales'] != null) {
-          canales = Map<String, dynamic>.from(data['Canales']);
-        }
-        retorno = User(
-          id: id,
-          email: data['correo'],
-          displayName: data['nombre'],
-          photoUrl: data['urlImage'],
-          change: data['change'],
-          canales: canales,
-        );
+        retorno.fromMap(id, data);
       }
     });
     return retorno;
+  }
+
+  Future<DatabaseEvent> getUserD(String id) async {
+    return database.child('Usuarios').child(id).once();
   }
 
   Future<String> addUser(User user) async {
@@ -133,6 +130,31 @@ class AppDataBase {
     return message;
   }
 
+  Stream<DatabaseEvent> getNewMessage(String chanel) =>
+      FirebaseDatabase.instance
+          .ref()
+          .child('Canales')
+          .child(chanel)
+          .child("mensajes")
+          .orderByChild("fecha_envio")
+          .onChildAdded;
+
+  Stream<DatabaseEvent> getMessageEdit(String chanel) =>
+      FirebaseDatabase.instance
+          .ref()
+          .child('Canales')
+          .child(chanel)
+          .child("mensajes")
+          .onChildChanged;
+
+  Stream<DatabaseEvent> getMessageDelete(String chanel) =>
+      FirebaseDatabase.instance
+          .ref()
+          .child('Canales')
+          .child(chanel)
+          .child("mensajes")
+          .onChildRemoved;
+
   Future<dynamic> getUserInChanel(String chanel, String userId) async {
     return await database
         .child("Canales")
@@ -142,8 +164,11 @@ class AppDataBase {
         .once();
   }
 
-  Stream<DatabaseEvent> getChanelInUser(String userId) =>
-      database.child("Usuarios").child(userId).child("Canales").onValue;
+  Stream<DatabaseEvent> getChanelInUser(String id) =>
+      database.child("Usuarios").child(id).child("Canales").onValue;
+
+  Stream<DatabaseEvent> getChanelStream(String chanel) =>
+      database.child("Canales").child(chanel).onValue;
 
   Future<DatabaseEvent> getChanel(String chanel) async {
     return (await database.child("Canales").child(chanel).once());
@@ -151,8 +176,10 @@ class AppDataBase {
 
   Stream<DatabaseEvent> getChanels() => database.child("Canales").onValue;
 
-  Stream<DatabaseEvent> getUsers(String chanel) =>
-      database.child("Usuarios").onValue;
+  Stream<DatabaseEvent> getUsersInChanel(String chanel) =>
+      database.child("Canales").child(chanel).child("usuarios").onValue;
+
+  Stream<DatabaseEvent> getUsers() => database.child("Usuarios").onValue;
 
   Stream<DatabaseEvent> getAdministrators(String chanel) =>
       database.child("Canales").child(chanel).child('administradores').onValue;
@@ -203,11 +230,5 @@ class AppDataBase {
         .child('mensajes')
         .child(messageId)
         .update({'texto': message});
-    await database
-        .child("Canales")
-        .child(chanel)
-        .child('mensajes')
-        .child(messageId)
-        .update({'fecha_edicion': message});
   }
 }

@@ -24,8 +24,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  late AppLocalizations localizations = AppLocalizations.of(context);
   final double expandedHeight = 250;
+  late AppLocalizations localizations;
   final double collapsedHeight = 65;
   final scrollController = ScrollController();
   final Login login = Login();
@@ -33,6 +33,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
+    localizations = AppLocalizations(Localizations.localeOf(context));
     return BlocProvider(
       create: (BuildContext context) => LoginBloc(),
       child: BlocListener<LoginBloc, LoginState>(
