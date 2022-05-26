@@ -94,7 +94,7 @@ class _SingUpPageState extends State<SingUpPage> {
                                 (value) {
                                   if (!Validator(value).isValidEmail) {
                                     return localizations
-                                        .dictionary(Strings.loginErrorPassword);
+                                        .dictionary(Strings.loginErrorEmail);
                                   }
                                   return null;
                                 },

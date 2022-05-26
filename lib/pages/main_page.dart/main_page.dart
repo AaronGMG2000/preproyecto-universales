@@ -1,6 +1,8 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:proyecto/model/user_model.dart';
+import 'package:proyecto/pages/create_password_page/create_pasword_page.dart';
 import 'package:proyecto/pages/home_page/home_page.dart';
 import 'package:proyecto/pages/login_page/login_page.dart';
 import 'package:proyecto/pages/splash_page/splash_page.dart';
@@ -22,25 +24,32 @@ class MainPage extends StatelessWidget {
             if (user == null) {
               return const LoginPage();
             }
-            return FutureBuilder(
-                future: getUser(user.id),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    if (snapshot.data == null) {
-                      return const SplashPage();
+            return StreamBuilder(
+              stream: AppDataBase.shared.userStrem(user.id),
+              builder: (BuildContext context, snapshot) {
+                if (snapshot.hasData) {
+                  final DatabaseEvent data = snapshot.data as DatabaseEvent;
+                  if (data.snapshot.value != null) {
+                    User user = User();
+                    user.fromMap(data.snapshot.key as String,
+                        data.snapshot.value as dynamic);
+                    if (user.change) {
+                      return HomePage(user: user);
+                    } else {
+                      return const CreatePasswordPage();
                     }
-                    return const HomePage();
+                  } else {
+                    return const SplashPage();
                   }
+                } else {
                   return const SplashPage();
-                });
+                }
+              },
+            );
           }
           return const SplashPage();
         },
       ),
     );
-  }
-
-  Future<User> getUser(String id) async {
-    return await AppDataBase.shared.getUser(id);
   }
 }

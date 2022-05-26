@@ -92,8 +92,7 @@ class SettingsPageState extends State<SettingsPage> {
                         top: 20,
                       ),
                       child: Dropdownbutton1(
-                        initialValue:
-                            locatizations.dictionary(Strings.settingsSystem),
+                        initialValue: "Sistema",
                         getValue: () async {
                           int? number = await AppPreferences.shared
                               .getIntPreference("defaultLanguage");
@@ -145,8 +144,7 @@ class SettingsPageState extends State<SettingsPage> {
                         top: 20,
                       ),
                       child: Dropdownbutton1(
-                        initialValue:
-                            locatizations.dictionary(Strings.settingsSystem),
+                        initialValue: "Sistema",
                         getValue: () async {
                           int? value = await AppPreferences.shared
                               .getIntPreference("defaultTheme");

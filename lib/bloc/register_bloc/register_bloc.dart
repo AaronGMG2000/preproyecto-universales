@@ -64,7 +64,12 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       final authService =
           Provider.of<AuthService>(event.context, listen: false);
       emit(RegisterLoading());
-      emit(CreatePasswordSuccess());
+      await authService.changePassword(event.user.password).then((value) {
+        emit(CreatePasswordSuccess());
+      }).catchError((error) {
+        emit(RegisterFailure(
+            error: localizations.dictionary(Strings.failError)));
+      });
     });
     on<RegisterStart>((event, emit) async {
       emit(RegisterLoading());

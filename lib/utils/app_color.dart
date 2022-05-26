@@ -27,4 +27,10 @@ class AppColor {
   final backgroundHeaderSettingsDark = const Color.fromRGBO(17, 17, 17, 1);
   final backgroundSettins = Colors.white;
   final backgroundSettinsDark = const Color.fromRGBO(29, 29, 29, 1);
+  final backgroundAppBar = const Color(0xFF517da2);
+  final backgroundAppBarDark = const Color(0xFF212d3b);
+  final backgroundHomeDark = const Color(0xFF1d2733);
+  final backgroundHome = Colors.white;
+  final backgroundModal = const Color(0xFFCCCCCC);
+  final backgroundModalDark = const Color(0xFF1d2733);
 }

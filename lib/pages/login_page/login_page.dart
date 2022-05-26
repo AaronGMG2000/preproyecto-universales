@@ -24,8 +24,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  late AppLocalizations localizations = AppLocalizations.of(context);
   final double expandedHeight = 250;
+  late AppLocalizations localizations;
   final double collapsedHeight = 65;
   final scrollController = ScrollController();
   final Login login = Login();
@@ -33,26 +33,19 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
+    localizations = AppLocalizations(Localizations.localeOf(context));
     return BlocProvider(
       create: (BuildContext context) => LoginBloc(),
       child: BlocListener<LoginBloc, LoginState>(
         listener: (context, state) {
           switch (state.runtimeType) {
             case LoginSuccess:
-              Navigator.of(context).pop();
               break;
             case LoginFail:
-              Navigator.of(context).pop();
               final estado = state as LoginFail;
               alertBottom(estado.error, Colors.orange, 1500, context);
               break;
             case LoginLoading:
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) =>
-                      const Center(child: CircularProgressIndicator()),
-                ),
-              );
               break;
           }
         },

@@ -35,6 +35,12 @@ class AuthService {
     }
   }
 
+  Future<void> changePassword(String password) async {
+    await _firebaseAuth.currentUser!.updatePassword(password);
+    await AppDataBase.shared
+        .setChange(_userfromFirebase(_firebaseAuth.currentUser)!);
+  }
+
   Future<User?> signInWithFacebook() async {
     final LoginResult loginResult = await FacebookAuth.instance.login();
     final auth.OAuthCredential credential =
@@ -42,7 +48,12 @@ class AuthService {
     final auth.User? user =
         (await _firebaseAuth.signInWithCredential(credential)).user;
     await createGeneralChanel(_userfromFirebase(user)!);
-    return await AppDataBase.shared.getUser(user!.uid);
+    await AppDataBase.shared.setOnline(_userfromFirebase(user)!, true);
+    if (user!.email == null) {
+      await AppDataBase.shared
+          .setChange(_userfromFirebase(_firebaseAuth.currentUser)!);
+    }
+    return await AppDataBase.shared.getUser(user.uid);
   }
 
   Future<User?> signInWithTwitter() async {
@@ -57,7 +68,13 @@ class AuthService {
     final auth.User? user =
         (await _firebaseAuth.signInWithCredential(twitterAuthCredentials)).user;
     await createGeneralChanel(_userfromFirebase(user)!);
-    return await AppDataBase.shared.getUser(user!.uid);
+
+    await AppDataBase.shared.setOnline(_userfromFirebase(user)!, true);
+    if (user!.email == null) {
+      await AppDataBase.shared
+          .setChange(_userfromFirebase(_firebaseAuth.currentUser)!);
+    }
+    return await AppDataBase.shared.getUser(user.uid);
   }
 
   Future<User?> sigInWithGoogle() async {
@@ -70,7 +87,12 @@ class AuthService {
     final auth.User? user =
         (await _firebaseAuth.signInWithCredential(credential)).user;
     await createGeneralChanel(_userfromFirebase(user)!);
-    return await AppDataBase.shared.getUser(user!.uid);
+    await AppDataBase.shared.setOnline(_userfromFirebase(user)!, true);
+    if (user!.email == null) {
+      await AppDataBase.shared
+          .setChange(_userfromFirebase(_firebaseAuth.currentUser)!);
+    }
+    return await AppDataBase.shared.getUser(user.uid);
   }
 
   Future<User?> signInWithEmailAndPassword(
@@ -82,6 +104,9 @@ class AuthService {
       password: password,
     );
     String id = _firebaseAuth.currentUser!.uid;
+
+    await AppDataBase.shared
+        .setOnline(_userfromFirebase(_firebaseAuth.currentUser)!, true);
     return await AppDataBase.shared.getUser(id);
   }
 
