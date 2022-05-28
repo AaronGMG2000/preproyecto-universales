@@ -1,9 +1,8 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:proyecto/bloc/profile_bloc/profile_bloc.dart';
 import 'package:proyecto/localization/locations.dart';
 import 'package:proyecto/model/login_model.dart';
-import 'package:proyecto/providers/auth_provider.dart';
 import 'package:proyecto/utils/app_color.dart';
 import 'package:proyecto/utils/app_string.dart';
 import 'package:proyecto/utils/app_validation.dart';
@@ -11,18 +10,16 @@ import 'package:proyecto/widget/widget_alert.dart';
 import 'package:proyecto/widget/widget_button.dart';
 import 'package:proyecto/widget/widget_input.dart';
 
-import '../../bloc/register_bloc/register_bloc.dart';
-
-class CreatePasswordPage extends StatefulWidget {
-  const CreatePasswordPage({
+class ChangePasswordPage extends StatefulWidget {
+  const ChangePasswordPage({
     Key? key,
   }) : super(key: key);
 
   @override
-  CreatePasswordPageState createState() => CreatePasswordPageState();
+  ChangePasswordPageState createState() => ChangePasswordPageState();
 }
 
-class CreatePasswordPageState extends State<CreatePasswordPage> {
+class ChangePasswordPageState extends State<ChangePasswordPage> {
   @override
   void initState() {
     super.initState();
@@ -47,22 +44,35 @@ class CreatePasswordPageState extends State<CreatePasswordPage> {
           ? AppColor.shared.backgroundHeaderSettingsDark
           : AppColor.shared.backgroundHeaderSettings,
       body: BlocProvider(
-        create: (BuildContext context) => RegisterBloc(),
-        child: BlocListener<RegisterBloc, RegisterState>(
+        create: (BuildContext context) => ProfileBloc(),
+        child: BlocListener<ProfileBloc, ProfileState>(
           listener: (context, state) {
             switch (state.runtimeType) {
-              case CreatePasswordSuccess:
-                break;
-              case RegisterFailure:
+              case ProfileSuccess:
                 Navigator.of(context).pop();
-                final estado = state as RegisterFailure;
+                Navigator.of(context).pop();
+                alertBottom(
+                    localizations.dictionary(Strings.updatePasswordSuccess),
+                    Colors.orange,
+                    1500,
+                    context);
+                break;
+              case ProfileFailure:
+                Navigator.of(context).pop();
+                final estado = state as ProfileFailure;
                 alertBottom(estado.error, Colors.orange, 1500, context);
                 break;
-              case RegisterLoading:
+              case ProfileLoading:
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        const Center(child: CircularProgressIndicator()),
+                  ),
+                );
                 break;
             }
           },
-          child: BlocBuilder<RegisterBloc, RegisterState>(
+          child: BlocBuilder<ProfileBloc, ProfileState>(
             builder: (context, state) {
               return Stack(
                 children: [
@@ -171,11 +181,12 @@ class CreatePasswordPageState extends State<CreatePasswordPage> {
                                           _formKey.currentState!.save();
                                           if (register.password ==
                                               register.repeatPassword) {
-                                            BlocProvider.of<RegisterBloc>(
+                                            BlocProvider.of<ProfileBloc>(
                                                     context)
-                                                .add(CreatePassword(
-                                                    user: register,
-                                                    context: context));
+                                                .add(ChangePassword(
+                                              password: register.password,
+                                              context: context,
+                                            ));
                                           } else {
                                             alertBottom(
                                               localizations.dictionary(Strings
@@ -189,24 +200,6 @@ class CreatePasswordPageState extends State<CreatePasswordPage> {
                                       },
                                       text: localizations.dictionary(
                                           Strings.updatePasswordButton),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 25, vertical: 0),
-                                    child: ButtonTextGradient(
-                                      height: 60,
-                                      size: 24,
-                                      color1: const Color(0xff32323f),
-                                      color2: const Color(0xff32323f),
-                                      onPressed: () {
-                                        final authService =
-                                            Provider.of<AuthService>(context,
-                                                listen: false);
-                                        authService.signOut();
-                                      },
-                                      text: localizations
-                                          .dictionary(Strings.cancelButtonText),
                                     ),
                                   ),
                                 ],

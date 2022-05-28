@@ -5,6 +5,7 @@ import 'package:proyecto/localization/locations.dart';
 import 'package:proyecto/model/login_model.dart';
 import 'package:proyecto/pages/settings_page/settings_page.dart';
 import 'package:proyecto/pages/sing_up_page/sing_up_page.dart';
+import 'package:proyecto/utils/app_biometric.dart';
 import 'package:proyecto/utils/app_color.dart';
 import 'package:proyecto/utils/app_string.dart';
 import 'package:proyecto/utils/app_style.dart';
@@ -119,14 +120,19 @@ class _LoginPageState extends State<LoginPage> {
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 25),
                               child: CheckboxText(
-                                onChanged: (value) {},
+                                onChanged: (value) {
+                                  login.rememberMe = value;
+                                },
                                 text: localizations
                                     .dictionary(Strings.loginRememberMe),
                               ),
                             ),
-                            const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 30),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 30),
                               child: IconButtonImage(
+                                onPresed: () async {
+                                  biometrico(context);
+                                },
                                 height: 60,
                                 icon: "assets/icons/finger.png",
                               ),

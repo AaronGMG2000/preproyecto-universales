@@ -118,7 +118,7 @@ class FormGrupoPageState extends State<FormGrupoPage> {
                                 }
                               },
                               text: localizations
-                                  .dictionary(Strings.chanelButtonText),
+                                  .dictionary(Strings.addUserButtonText),
                             ),
                           ),
                         ],

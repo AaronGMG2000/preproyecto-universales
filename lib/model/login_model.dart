@@ -3,5 +3,6 @@ class Login {
   late String password;
   late String repeatPassword;
   late String displayName;
+  late bool rememberMe = false;
   Login();
 }

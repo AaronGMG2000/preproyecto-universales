@@ -23,6 +23,12 @@ class ChanelBloc extends Bloc<ChanelEvent, ChanelState> {
             id, event.chanel.nombre, event.chanel.descripcion, event.user);
         if (create) {
           await AppDataBase.shared.addUserToChanel(id, id, event.user);
+          await AppDataBase.shared.newMessage(
+            id,
+            "grupo creado el ${DateTime.now().toIso8601String().split("T")[0]}",
+            event.user.id,
+            "notification",
+          );
           for (User userData in event.selectedUsers) {
             await AppDataBase.shared.addUserToChanel(id, id, userData);
             await AppDataBase.shared.newMessage(
@@ -32,12 +38,6 @@ class ChanelBloc extends Bloc<ChanelEvent, ChanelState> {
               "notification",
             );
           }
-          await AppDataBase.shared.newMessage(
-            id,
-            "grupo creado el ${DateTime.now().toIso8601String().split("T")[0]}",
-            event.user.id,
-            "notification",
-          );
           emit(ChanelSuccess());
         } else {
           emit(ChanelFail(error: localizations.dictionary(Strings.chanelFail)));

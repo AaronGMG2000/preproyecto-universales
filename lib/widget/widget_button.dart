@@ -113,16 +113,18 @@ class ButtonTextGradient extends StatelessWidget {
 class IconButtonImage extends StatelessWidget {
   final double height;
   final String icon;
+  final VoidCallback onPresed;
   const IconButtonImage({
     Key? key,
     this.height = 40,
     this.icon = "",
+    required this.onPresed,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: onPresed,
       borderRadius: BorderRadius.circular(100),
       child: Image.asset(
         icon,

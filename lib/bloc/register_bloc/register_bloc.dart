@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:proyecto/localization/locations.dart';
 import 'package:proyecto/model/login_model.dart';
 import 'package:proyecto/providers/auth_provider.dart';
+import 'package:proyecto/utils/app_encrypt.dart';
+import 'package:proyecto/utils/app_preferences.dart';
 import 'package:proyecto/utils/app_string.dart';
 part 'register_state.dart';
 part 'register_event.dart';
@@ -64,6 +66,8 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       final authService =
           Provider.of<AuthService>(event.context, listen: false);
       emit(RegisterLoading());
+      AppPreferences.shared
+          .setPreference("password", await encryptText(event.user.password));
       await authService.changePassword(event.user.password).then((value) {
         emit(CreatePasswordSuccess());
       }).catchError((error) {

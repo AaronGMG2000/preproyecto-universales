@@ -184,6 +184,26 @@ class AppDataBase {
   Stream<DatabaseEvent> getAdministrators(String chanel) =>
       database.child("Canales").child(chanel).child('administradores').onValue;
 
+  Stream<DatabaseEvent> getAddAdministrators(String chanel) => database
+      .child("Canales")
+      .child(chanel)
+      .child('administradores')
+      .onChildAdded;
+
+  Stream<DatabaseEvent> getRemoveAdministrators(String chanel) => database
+      .child("Canales")
+      .child(chanel)
+      .child('administradores')
+      .onChildRemoved;
+
+  Stream<DatabaseEvent> getAddUsers(String chanel) =>
+      database.child("Canales").child(chanel).child('usuarios').onChildAdded;
+
+  Stream<DatabaseEvent> getRemoveUsers(String chanel) =>
+      database.child("Canales").child(chanel).child('usuarios').onChildRemoved;
+
+  Stream<DatabaseEvent> getUserAdd() => database.child("Usuarios").onChildAdded;
+
   Stream<DatabaseEvent> getMessages(String chanel) => database
       .child("Canales")
       .child(chanel)
@@ -201,6 +221,17 @@ class AppDataBase {
         .child(chanel)
         .child('usuarios')
         .child(userId)
+        .remove();
+    await database
+        .child("Canales")
+        .child(chanel)
+        .child("administradores")
+        .child(userId)
+        .remove();
+    await database
+        .child("Usuarios")
+        .child(userId)
+        .child("Canales/$chanel")
         .remove();
   }
 
@@ -230,5 +261,9 @@ class AppDataBase {
         .child('mensajes')
         .child(messageId)
         .update({'texto': message});
+  }
+
+  Future<void> updateUserName(String userId, String name) async {
+    await database.child("Usuarios").child(userId).update({'nombre': name});
   }
 }

@@ -42,3 +42,63 @@ class ChatEdit extends ChatEvent {
   @override
   List<Object> get props => [mensaje, chanel, context];
 }
+
+class ChatAddAdmin extends ChatEvent {
+  final User user;
+  final Chanel chanel;
+  final BuildContext context;
+  final List<User> selectedUsers;
+  ChatAddAdmin({
+    required this.user,
+    required this.chanel,
+    required this.context,
+    required this.selectedUsers,
+  });
+  @override
+  List<Object> get props => [user, chanel, context, selectedUsers];
+}
+
+class ChatDeleteAdmin extends ChatEvent {
+  final User user;
+  final Chanel chanel;
+  final BuildContext context;
+  final List<User> selectedUsers;
+  ChatDeleteAdmin({
+    required this.user,
+    required this.chanel,
+    required this.context,
+    required this.selectedUsers,
+  });
+  @override
+  List<Object> get props => [user, chanel, context, selectedUsers];
+}
+
+class ChatDeleteUser extends ChatEvent {
+  final User user;
+  final Chanel chanel;
+  final BuildContext context;
+  final List<User> selectedUsers;
+  ChatDeleteUser({
+    required this.user,
+    required this.chanel,
+    required this.context,
+    required this.selectedUsers,
+  });
+  @override
+  List<Object> get props => [user, chanel, context, selectedUsers];
+}
+
+class ChatAddUser extends ChatEvent {
+  final User user;
+  final Chanel chanel;
+  final BuildContext context;
+  final List<User> selectedUsers;
+  ChatAddUser({
+    required this.user,
+    required this.chanel,
+    required this.context,
+    required this.selectedUsers,
+  });
+  @override
+  List<Object> get props => [user, chanel, context, selectedUsers];
+}

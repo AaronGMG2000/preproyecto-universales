@@ -8,18 +8,19 @@ import 'package:proyecto/utils/app_firebase.dart';
 
 class Chanel {
   late String id;
-  late List<dynamic> administradores;
+  late Map<String, User> administradores;
   late List<Message> mensajes;
   late String descripcion;
   late String nombre;
   late Map<String, User> usuarios;
+  late Map<String, User> allUsers = {};
   late DateTime fechaCreacion;
   late User creador;
   late Color color = Colors.blue;
 
   Chanel({
     this.id = '',
-    this.administradores = const [],
+    this.administradores = const {},
     this.mensajes = const [],
     this.descripcion = '',
     this.nombre = '',
@@ -29,17 +30,20 @@ class Chanel {
   static Future<Chanel> fromMap(String key, Map data) async {
     Chanel chanel = Chanel();
     chanel.id = key;
-    chanel.administradores = data['administradores'] == null
-        ? []
-        : data['administradores'].values.toList();
+    chanel.allUsers = await getAllUsers();
     chanel.mensajes =
         data['mensajes'] == null ? [] : getMessages(data['mensajes']);
     chanel.mensajes.sort((a, b) => b.fechaEnvio.compareTo(a.fechaEnvio));
     chanel.descripcion =
         data['descripcion'] == null ? '' : data['descripcion'] as String;
     chanel.nombre = data['nombre'] == null ? '' : data['nombre'] as String;
-    chanel.usuarios =
-        data['usuarios'] == null ? {} : await getUsers(data['usuarios']);
+    chanel.usuarios = data['usuarios'] == null
+        ? {}
+        : getUsers(data['usuarios'], chanel.allUsers);
+    chanel.administradores = {};
+    for (String us in data['administradores'].values) {
+      chanel.administradores[us] = chanel.usuarios[us]!;
+    }
     chanel.fechaCreacion = data['fecha_creacion'] == null
         ? DateTime.now()
         : DateTime.fromMillisecondsSinceEpoch(data['fecha_creacion'] as int);
@@ -50,7 +54,7 @@ class Chanel {
   static Future<Chanel> fromMapOnly(String key, Map data) async {
     Chanel chanel = Chanel();
     chanel.id = key;
-    chanel.administradores = [];
+    chanel.administradores = {};
     chanel.mensajes =
         data['mensajes'] == null ? [] : getMessages(data['mensajes']);
     chanel.mensajes.sort((a, b) => b.fechaEnvio.compareTo(a.fechaEnvio));
@@ -102,15 +106,26 @@ Color getRandomColor() {
   return colors[Random().nextInt(colors.length)];
 }
 
-Future<Map<String, User>> getUsers(Map data) async {
-  Map<String, User> users = {};
-  for (String key in data.keys) {
-    DatabaseEvent dataU = await AppDataBase.shared.getUserD(key);
-    User newUser = User();
-    newUser.fromMap(key, dataU.snapshot.value as Map);
-    users[newUser.id] = newUser;
+Future<Map<String, User>> getAllUsers() async {
+  Map<String, User> usersMap = {};
+  Stream<DatabaseEvent> dataUsers = AppDataBase.shared.getUsers();
+  await for (DatabaseEvent dataUser in dataUsers) {
+    Map map = dataUser.snapshot.value as Map;
+    map.forEach((key, value) {
+      User newUser = User();
+      newUser.fromMap(key, value);
+      usersMap[key] = newUser;
+    });
+    break;
   }
-  data.forEach((key, value) {});
+  return usersMap;
+}
+
+Map<String, User> getUsers(Map data, Map allUsers) {
+  Map<String, User> users = {};
+  data.forEach((key, value) {
+    users[key] = allUsers[key]!;
+  });
   return users;
 }
 

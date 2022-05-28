@@ -3,6 +3,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:provider/provider.dart';
 import 'package:proyecto/localization/locations.dart';
 import 'package:proyecto/model/user_model.dart';
+import 'package:proyecto/pages/profile_page/profile_page.dart';
 import 'package:proyecto/pages/settings_page/settings_page.dart';
 import 'package:proyecto/providers/auth_provider.dart';
 import 'package:proyecto/utils/app_color.dart';
@@ -28,6 +29,7 @@ class NavigationDrawerPage extends StatelessWidget {
                 urlImage: user.photoUrl,
                 name: user.displayName,
                 email: user.email,
+                color: user.color,
               ),
               SizedBox(
                   height: MediaQuery.of(context).size.height * 0.7,
@@ -38,7 +40,14 @@ class NavigationDrawerPage extends StatelessWidget {
                         context,
                         text: localizations.dictionary(Strings.profileText),
                         icon: Icons.person,
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProfilePage(user: user),
+                            ),
+                          );
+                        },
                       ),
                       const SizedBox(height: 16),
                       buildMenuItem(
@@ -90,6 +99,7 @@ Widget buildHeader(
   required String urlImage,
   required String name,
   required String email,
+  required Color color,
 }) {
   final isDark = Theme.of(context).primaryColor == Colors.white;
   return Material(
@@ -101,10 +111,28 @@ Widget buildHeader(
       padding: const EdgeInsets.only(top: 60, bottom: 30, left: 10),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 30,
-            backgroundImage: NetworkImage(urlImage),
-          ),
+          urlImage.isEmpty
+              ? Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: color,
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    name.characters.first,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 24,
+                    ),
+                  ),
+                )
+              : CircleAvatar(
+                  radius: 30,
+                  backgroundImage: NetworkImage(urlImage),
+                ),
           const SizedBox(width: 20),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,

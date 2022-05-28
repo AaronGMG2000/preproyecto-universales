@@ -45,4 +45,39 @@ Map<Strings, String> dictionaryEs = {
   Strings.chanelDescriptionError: "Ingrese una descripción",
   Strings.chanelFail: "El canal ya existe",
   Strings.editMessage: "Editar mensaje",
+  Strings.addAdministrators: "Agregar administradores",
+  Strings.addUsers: "Agregar usuarios",
+  Strings.deleteAdministrators: "Eliminar administradores",
+  Strings.deleteUsers: "Eliminar usuarios",
+  Strings.administrators: "Administradores",
+  Strings.users: "Usuarios",
+  Strings.addUserButtonText: "Agregar usuarios",
+  Strings.deleteUsersText: "Eliminar usuarios",
+  Strings.profile: "Perfil",
+  Strings.changePerfil: "Actualizar perfil",
+  Strings.changePassword: "Cambiar contraseña",
+  Strings.updateSuccess: "Actualización exitosa",
+  Strings.updatePasswordSuccess: "Contraseña actualizada",
+  Strings.updatePasswordButton: "Actualizar contraseña",
+  Strings.noRememberMe: "No hay una sesión almacenada",
+  Strings.localizedReasonString: "Autentiquese para acceder",
+  Strings.lockedOutString:
+      "API bloqueada temporalmente debido a demasiados intentos",
+  Strings.notAvailableString:
+      "El dispositivo no tiene soporte de hardware para datos biometricos",
+  Strings.notEnrolledString:
+      "No se encuentra ningun dato biometrico en el dispositivo",
+  Strings.otherOperatingSystemString:
+      "Sistema operativo no compatible con datos biometricos",
+  Strings.passcodeNotSetString:
+      "No se encuentra ningun codigo de acceso en el dispositivo",
+  Strings.permanentlyLockedOutString:
+      "API bloqueada permanentemente debido a demasiados intentos, coloque su pin o patron de seguridad",
+  Strings.signInTitleString: "Sesión Almacenada",
+  Strings.cancelButtonString: "Cancelar",
+  Strings.goToSettingsButtonString: "Ajustes",
+  Strings.biometricHintString: "Pon el dedo en el sensor",
+  Strings.biometricNotRecognizedString: "Huella no reconocida",
+  Strings.biometricSuccessString: "Huella reconocida",
+  Strings.goToSettingsDescriptionString: "Por favor configure su huella",
 };

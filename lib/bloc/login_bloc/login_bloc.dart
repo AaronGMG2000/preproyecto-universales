@@ -7,6 +7,8 @@ import 'package:proyecto/localization/locations.dart';
 import 'package:proyecto/model/login_model.dart';
 import 'package:proyecto/model/user_model.dart';
 import 'package:proyecto/providers/auth_provider.dart';
+import 'package:proyecto/utils/app_encrypt.dart';
+import 'package:proyecto/utils/app_preferences.dart';
 import 'package:proyecto/utils/app_string.dart';
 part 'login_event.dart';
 part 'login_state.dart';
@@ -66,6 +68,16 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       late AppLocalizations localizations = AppLocalizations.of(event.context);
       final authService =
           Provider.of<AuthService>(event.context, listen: false);
+      Login login = event.login;
+      if (login.rememberMe) {
+        AppPreferences.shared
+            .setPreference("email", await encryptText(login.email));
+        AppPreferences.shared
+            .setPreference("password", await encryptText(login.password));
+        AppPreferences.shared.setPreference("rememberMe", true);
+      } else {
+        AppPreferences.shared.setPreference("rememberMe", false);
+      }
       await authService
           .signInWithEmailAndPassword(
             event.login.email,

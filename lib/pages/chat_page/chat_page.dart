@@ -8,6 +8,7 @@ import 'package:proyecto/model/chanel_model.dart';
 import 'package:proyecto/model/message_model.dart';
 import 'package:proyecto/model/user_model.dart';
 import 'package:proyecto/pages/chat_page/edit_chat_page/edit_chat_page.dart';
+import 'package:proyecto/pages/chat_page/menu_item_page/menu_item.dart';
 import 'package:proyecto/utils/app_color.dart';
 import 'package:proyecto/utils/app_firebase.dart';
 import 'package:proyecto/utils/app_string.dart';
@@ -33,199 +34,213 @@ class ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).primaryColor == Colors.white;
-    return Scaffold(
-      backgroundColor: isDark
-          ? AppColor.shared.backgroundHomeDark
-          : AppColor.shared.backgroundHome,
-      appBar: AppBar(
-        actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.more_vert,
-              color: Colors.white,
-            ),
-            onPressed: () {},
-          ),
-        ],
-        backgroundColor: isDark
-            ? AppColor.shared.backgroundAppBarDark
-            : AppColor.shared.backgroundAppBar,
-        title: Text(widget.chanel.nombre),
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: const AssetImage('assets/images/fondo2.png'),
-            fit: BoxFit.fitWidth,
-            colorFilter: ColorFilter.mode(
-                isDark ? const Color(0XFF12151e) : const Color(0XFFacc689),
-                BlendMode.color),
-          ),
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.785,
-                child: FutureBuilder(
-                  future: getChanel(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      late Chanel chanel = snapshot.data as Chanel;
-                      late List<Message> messages = chanel.mensajes;
-                      return StreamBuilder(
-                        stream: AppDataBase.shared.getNewMessage(chanel.id),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            DatabaseEvent data = snapshot.data as DatabaseEvent;
-                            final message = Message.fromMap(
-                                data.snapshot.key!, data.snapshot.value as Map);
-                            try {
-                              messages.firstWhere(
-                                  (element) => element.id == message.id);
-                            } catch (e) {
-                              messages.insert(0, message);
-                            }
-                          }
-                          return StreamBuilder(
-                            stream:
-                                AppDataBase.shared.getMessageDelete(chanel.id),
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                try {
-                                  DatabaseEvent data =
-                                      snapshot.data as DatabaseEvent;
-                                  messages.removeWhere((element) {
-                                    return element.id == data.snapshot.key!;
-                                  });
-                                } catch (e) {
-                                  //
-                                }
-                              }
-                              return StreamBuilder(
-                                stream: AppDataBase.shared
-                                    .getMessageEdit(chanel.id),
-                                builder: (context, snapshot) {
-                                  if (snapshot.hasData) {
-                                    DatabaseEvent data =
-                                        snapshot.data as DatabaseEvent;
-                                    final message = Message.fromMap(
-                                        data.snapshot.key!,
-                                        data.snapshot.value as Map);
-                                    try {
-                                      final Message editM = messages.firstWhere(
-                                          (element) =>
-                                              element.id == message.id);
-                                      editM.texto = message.texto;
-                                    } catch (e) {
-                                      //
-                                    }
-                                  }
-                                  return ListView.builder(
-                                    reverse: true,
-                                    itemCount: messages.length,
-                                    itemBuilder: (context, index) {
-                                      User userMessage = getUser(
-                                          chanel, messages[index].usuario);
-                                      if (messages[index].type ==
-                                          'notification') {
-                                        return _getNotificationMessage(
-                                            messages[index], userMessage);
-                                      } else if (userMessage.id ==
-                                          widget.user.id) {
-                                        return _getSendMessage(
-                                            messages[index], userMessage);
-                                      } else {
-                                        return _getReceivedMessage(
-                                            messages[index], userMessage);
-                                      }
-                                    },
-                                  );
-                                },
-                              );
-                            },
-                          );
-                        },
-                      );
-                    } else {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                  },
-                ),
+    return FutureBuilder(
+      future: getChanel(),
+      builder: (context, snapshot) {
+        late Chanel chanel = Chanel();
+        late List<Message> messages = [];
+        if (snapshot.hasData) {
+          chanel = snapshot.data as Chanel;
+          messages = chanel.mensajes;
+        }
+        return StreamBuilder(
+          stream: AppDataBase.shared.getUserAdd(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              DatabaseEvent data = snapshot.data as DatabaseEvent;
+              User newUser = User();
+              newUser.fromMap(data.snapshot.key!, data.snapshot.value as Map);
+              if (widget.chanel.allUsers[newUser.id] == null) {
+                widget.chanel.allUsers[newUser.id] = newUser;
+              }
+            }
+            return Scaffold(
+              backgroundColor: isDark
+                  ? AppColor.shared.backgroundHomeDark
+                  : AppColor.shared.backgroundHome,
+              appBar: AppBar(
+                actions: [
+                  MenuButton(user: widget.user, chanel: widget.chanel),
+                ],
+                backgroundColor: isDark
+                    ? AppColor.shared.backgroundAppBarDark
+                    : AppColor.shared.backgroundAppBar,
+                title: Text(widget.chanel.nombre),
               ),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
-                alignment: Alignment.bottomCenter,
-                height: MediaQuery.of(context).size.height * 0.08,
-                child: BlocProvider(
-                  create: (BuildContext context) => ChatBloc(),
-                  child: BlocListener<ChatBloc, ChatState>(
-                    listener: (context, state) {
-                      switch (state.runtimeType) {
-                        case ChatSuccess:
-                          Navigator.of(context).pop();
-                          break;
-                        case ChatFail:
-                          Navigator.of(context).pop();
-                          final estado = state as ChatFail;
-                          alertBottom(
-                              estado.error, Colors.orange, 1500, context);
-                          break;
-                        case ChatLoading:
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => const Center(
-                                  child: CircularProgressIndicator()),
-                            ),
-                          );
-                          break;
-                      }
-                    },
-                    child: BlocBuilder<ChatBloc, ChatState>(
-                      builder: (context, state) {
-                        return Form(
-                          key: _formKey,
-                          child: InputText(
-                            hint: "Message",
-                            control: textControl,
-                            validator: (value) {
-                              if (value.isEmpty) {
-                                return "";
-                              }
-                              return null;
-                            },
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                _formKey.currentState!.save();
-                                FocusScope.of(context).unfocus();
-                                textControl.clear();
-                                BlocProvider.of<ChatBloc>(context).add(
-                                  ChatStart(
-                                    user: widget.user,
-                                    chanel: widget.chanel,
-                                    mensaje: message,
-                                    context: context,
-                                  ),
-                                );
-                              }
-                            },
-                            onSaved: (value) {
-                              message.texto = value!;
-                            },
-                          ),
-                        );
-                      },
-                    ),
+              body: Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: const AssetImage('assets/images/fondo2.png'),
+                    fit: BoxFit.fitWidth,
+                    colorFilter: ColorFilter.mode(
+                        isDark
+                            ? const Color(0XFF12151e)
+                            : const Color(0XFFacc689),
+                        BlendMode.color),
                   ),
                 ),
-              )
-            ],
-          ),
-        ),
-      ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.785,
+                        child: StreamBuilder(
+                          stream: AppDataBase.shared.getNewMessage(chanel.id),
+                          builder: (context, snapshot) {
+                            if (messages.isEmpty) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+                            if (snapshot.hasData) {
+                              DatabaseEvent data =
+                                  snapshot.data as DatabaseEvent;
+                              final message = Message.fromMap(
+                                  data.snapshot.key!,
+                                  data.snapshot.value as Map);
+                              try {
+                                messages.firstWhere(
+                                    (element) => element.id == message.id);
+                              } catch (e) {
+                                messages.insert(0, message);
+                              }
+                            }
+                            return StreamBuilder(
+                              stream: AppDataBase.shared
+                                  .getMessageDelete(chanel.id),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  try {
+                                    DatabaseEvent data =
+                                        snapshot.data as DatabaseEvent;
+                                    messages.removeWhere((element) {
+                                      return element.id == data.snapshot.key!;
+                                    });
+                                  } catch (e) {
+                                    //
+                                  }
+                                }
+                                return StreamBuilder(
+                                  stream: AppDataBase.shared
+                                      .getMessageEdit(chanel.id),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData) {
+                                      DatabaseEvent data =
+                                          snapshot.data as DatabaseEvent;
+                                      final message = Message.fromMap(
+                                          data.snapshot.key!,
+                                          data.snapshot.value as Map);
+                                      try {
+                                        final Message editM =
+                                            messages.firstWhere((element) =>
+                                                element.id == message.id);
+                                        editM.texto = message.texto;
+                                      } catch (e) {
+                                        //
+                                      }
+                                    }
+                                    return ListView.builder(
+                                      reverse: true,
+                                      itemCount: messages.length,
+                                      itemBuilder: (context, index) {
+                                        User userMessage = getUser(
+                                            chanel, messages[index].usuario);
+                                        if (messages[index].type ==
+                                            'notification') {
+                                          return _getNotificationMessage(
+                                              messages[index], userMessage);
+                                        } else if (userMessage.id ==
+                                            widget.user.id) {
+                                          return _getSendMessage(
+                                              messages[index], userMessage);
+                                        } else {
+                                          return _getReceivedMessage(
+                                              messages[index], userMessage);
+                                        }
+                                      },
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 5.0, vertical: 5),
+                        alignment: Alignment.bottomCenter,
+                        height: MediaQuery.of(context).size.height * 0.08,
+                        child: BlocProvider(
+                          create: (BuildContext context) => ChatBloc(),
+                          child: BlocListener<ChatBloc, ChatState>(
+                            listener: (context, state) {
+                              switch (state.runtimeType) {
+                                case ChatSuccess:
+                                  Navigator.of(context).pop();
+                                  break;
+                                case ChatFail:
+                                  Navigator.of(context).pop();
+                                  final estado = state as ChatFail;
+                                  alertBottom(estado.error, Colors.orange, 1500,
+                                      context);
+                                  break;
+                                case ChatLoading:
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => const Center(
+                                          child: CircularProgressIndicator()),
+                                    ),
+                                  );
+                                  break;
+                              }
+                            },
+                            child: BlocBuilder<ChatBloc, ChatState>(
+                              builder: (context, state) {
+                                return Form(
+                                  key: _formKey,
+                                  child: InputText(
+                                    hint: "Message",
+                                    control: textControl,
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return "";
+                                      }
+                                      return null;
+                                    },
+                                    onPressed: () {
+                                      if (_formKey.currentState!.validate()) {
+                                        _formKey.currentState!.save();
+                                        FocusScope.of(context).unfocus();
+                                        textControl.clear();
+                                        BlocProvider.of<ChatBloc>(context).add(
+                                          ChatStart(
+                                            user: widget.user,
+                                            chanel: widget.chanel,
+                                            mensaje: message,
+                                            context: context,
+                                          ),
+                                        );
+                                      }
+                                    },
+                                    onSaved: (value) {
+                                      message.texto = value!;
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -238,7 +253,7 @@ class ChatPageState extends State<ChatPage> {
         backgroundColor: Colors.transparent,
       );
   User getUser(Chanel chanel, String id) {
-    return chanel.usuarios[id]!;
+    return chanel.allUsers[id]!;
   }
 
   Widget _getReceivedMessage(Message message, User user) {
@@ -472,6 +487,9 @@ class ChatPageState extends State<ChatPage> {
     DatabaseEvent data = await AppDataBase.shared.getChanel(widget.chanel.id);
     Map map = data.snapshot.value as Map;
     String key = data.snapshot.key!;
-    return Chanel.fromMap(key, map);
+    Chanel chanel = await Chanel.fromMap(key, map);
+    widget.chanel.administradores = chanel.administradores;
+    widget.chanel.usuarios = chanel.usuarios;
+    return chanel;
   }
 }
